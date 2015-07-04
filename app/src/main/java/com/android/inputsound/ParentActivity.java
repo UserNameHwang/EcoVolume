@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.android.inputsound.FFT.RealDoubleFFT;
 import com.gc.materialdesign.views.ButtonFlat;
+import com.gc.materialdesign.views.ButtonRectangle;
 
 import java.util.List;
 
@@ -232,7 +233,7 @@ public class ParentActivity extends AppCompatActivity {
 	// EcoVolume onClick Function
 	public void onEcoVolume(View v){
 
-		ButtonFlat EcoButton = (ButtonFlat) v;
+		ButtonRectangle EcoButton = (ButtonRectangle) v;
 		com.gc.materialdesign.views.Switch ecoSwitch = (com.gc.materialdesign.views.Switch)findViewById(R.id.ecoSwitch);
 
 		if(Ecostarted){

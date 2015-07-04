@@ -33,4 +33,13 @@
         android:background="#1E88E5"
         materialdesign:check="true" />
 
+    <com.gc.materialdesign.views.Slider
+        android:id="@+id/testSlider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        materialdesign:max="100"
+        materialdesign:min="70"
+        materialdesign:showNumberIndicator="true"/>
+
+
 </LinearLayout>

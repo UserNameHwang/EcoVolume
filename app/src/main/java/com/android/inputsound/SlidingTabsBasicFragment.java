@@ -3,6 +3,8 @@ package com.android.inputsound;
 import com.android.view.LineGraphSetting;
 import com.android.view.SlidingTabLayout;
 import com.gc.materialdesign.views.ButtonFlat;
+import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.Slider;
 import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
 import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
 
@@ -62,7 +64,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 		handler = new Handler() {
 			public void handleMessage(Message msg) {
-				handler.sendEmptyMessageDelayed(0,1000); // 1초에 1씩 증가(1000 = 1 초)
+				handler.sendEmptyMessageDelayed(0,2000); // 2초에 1씩 증가(1000 = 1 초)
 				recordTask.calInputdB();
 				recordTask.calOutputdB();
 			}
@@ -136,7 +138,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 					homeView = getActivity().getLayoutInflater().inflate(
 							R.layout.first_main, container, false);
 
-					ButtonFlat EcoButton = (ButtonFlat)homeView.findViewById(R.id.ecoButton);
+					ButtonRectangle EcoButton = (ButtonRectangle)homeView.findViewById(R.id.ecoButton);
 					com.gc.materialdesign.views.Switch ecoSwitch = (com.gc.materialdesign.views.Switch)homeView.findViewById(R.id.ecoSwitch);
 					indBValue = (TextView)homeView.findViewById(R.id.inputDB);
 					outdBValue = (TextView)homeView.findViewById(R.id.outputDB);

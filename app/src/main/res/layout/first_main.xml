@@ -109,7 +109,7 @@
         android:onClick="onEcoVolume"/>
     -->
 
-    <com.gc.materialdesign.views.ButtonFlat
+    <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/ecoButton"
         android:onClick="onEcoVolume"
         android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
         android:layout_marginLeft="40dp"
         android:textSize="20sp"
         android:layout_below="@+id/noiseSwitch"
-        android:background="#1E88E5"
+        android:background="#7BB9EF"
         android:text="에코볼륨&#10;시작하기" />
 
 </RelativeLayout>
