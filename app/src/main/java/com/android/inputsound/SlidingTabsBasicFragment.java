@@ -22,6 +22,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -198,6 +199,25 @@ public class SlidingTabsBasicFragment extends Fragment {
 					infoView = getActivity().getLayoutInflater().inflate(
 							R.layout.testing, container, false);
 					container.addView(infoView);
+					final Slider slider = (Slider)infoView.findViewById(R.id.testSlider);
+
+					slider.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+						@Override
+						public void onValueChanged(int i) {
+
+						}
+					});
+
+					slider.setOnTouchListener(new View.OnTouchListener() {
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							if(event.getAction() == MotionEvent.ACTION_UP)
+								mViewPager.requestDisallowInterceptTouchEvent(false);
+							else
+								mViewPager.requestDisallowInterceptTouchEvent(true);
+							return false;
+						}
+					});
 
 					ThirdCheck++;
 					return infoView;

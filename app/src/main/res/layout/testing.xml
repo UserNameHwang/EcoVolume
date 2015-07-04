@@ -33,13 +33,21 @@
         android:background="#1E88E5"
         materialdesign:check="true" />
 
-    <com.gc.materialdesign.views.Slider
-        android:id="@+id/testSlider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        materialdesign:max="100"
-        materialdesign:min="70"
-        materialdesign:showNumberIndicator="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical">
 
+        <com.gc.materialdesign.views.Slider
+            android:id="@+id/testSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1E88E5"
+            android:layout_centerInParent="true"
+            materialdesign:max="100"
+            materialdesign:min="70"
+            materialdesign:showNumberIndicator="true" />
+
+    </RelativeLayout>
 
 </LinearLayout>
