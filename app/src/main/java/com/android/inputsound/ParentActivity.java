@@ -33,6 +33,7 @@ public class ParentActivity extends AppCompatActivity {
 
 	private SlidingTabsBasicFragment fragment;
 
+	
 	private final long INTERVAL = 2000;
 	private long backTime = 0;
 
