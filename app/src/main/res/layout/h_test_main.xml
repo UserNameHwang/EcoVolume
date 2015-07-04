@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center_vertical|center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hello"
+        android:layout_gravity="center"
+        android:id="@+id/dbValue"/>
+
+    <ImageView
+        android:id="@+id/ImageView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/StartStopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Visualization Start" />
+
+    <Button
+        android:id="@+id/EcoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eco Volume Start" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/edit_decibel" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Min Decibel"
+            android:id="@+id/btn_input_decibel" />
+    </LinearLayout>
+
+    <SeekBar
+        android:layout_width="253dp"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/box2"
+        android:layout_alignTop="@id/lowLimitSet"
+        android:layout_toRightOf="@id/lowLimitSet"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="70dp"
+        android:max="25"
+        android:id="@+id/LimitTest" />
+
+</LinearLayout>
