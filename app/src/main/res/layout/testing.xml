@@ -16,8 +16,8 @@
         android:id="@+id/EXbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:text="Button EX" />
+        android:background="#000000"
+        android:text="Button TEST" />
 
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/button"
