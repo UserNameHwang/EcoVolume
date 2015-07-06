@@ -17,16 +17,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="3"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/view_border"
+            android:background="@drawable/background_rec_material"
+            android:gravity="center_vertical"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
             android:text="실시간 주변 소음"
-            android:textSize="25sp"
+            android:textSize="23sp"
             android:textColor="#FF000000"/>
 
         <TextView
@@ -42,16 +46,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="3"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <TextView
             android:id="@+id/text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFFFFE"
+            android:background="@drawable/background_rec_material"
+            android:gravity="center_vertical"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
             android:text="현재 출력 음량"
-            android:textSize="25sp"/>
+            android:textSize="23sp"
+            android:textColor="#FF000000"/>
 
         <TextView
             android:id="@+id/outputDB"
@@ -68,7 +77,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_weight="6"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <LinearLayout

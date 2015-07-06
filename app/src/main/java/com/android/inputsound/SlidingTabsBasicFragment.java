@@ -134,8 +134,6 @@ public class SlidingTabsBasicFragment extends Fragment {
 					ButtonRectangle EcoButton = (ButtonRectangle)homeView.findViewById(R.id.ecoButton);
 					ButtonRectangle NoiseButton = (ButtonRectangle)homeView.findViewById(R.id.noiseButton);
 
-					ButtonRectangle text2 = (ButtonRectangle)homeView.findViewById(R.id.text2);
-
 					final com.gc.materialdesign.views.Switch ecoSwitch = (com.gc.materialdesign.views.Switch)homeView.findViewById(R.id.ecoSwitch);
 
 					indBValue = (TextView)homeView.findViewById(R.id.inputDB);
@@ -143,17 +141,9 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 					NoiseButton.setTextColor(Color.parseColor("#000000"));
 					EcoButton.setTextColor(Color.parseColor("#000000"));
-					text2.setTextColor(Color.parseColor("#000000"));
 
 					// 터치 이벤트 disable
 					// true 를 리턴하면 disable
-					text2.setOnTouchListener(new View.OnTouchListener() {
-						@Override
-						public boolean onTouch(View v, MotionEvent event) {
-							return true;
-						}
-					});
-
 					ecoSwitch.setOnTouchListener(new View.OnTouchListener() {
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
