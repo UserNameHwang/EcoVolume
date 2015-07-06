@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -345,23 +346,30 @@ public class SlidingTabsBasicFragment extends Fragment {
 			AudioRecord audioRecord = new AudioRecord(
 					MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
 
+			int maxJitter = AudioTrack.getMinBufferSize(frequency, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+			AudioTrack audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, 8000, AudioFormat.CHANNEL_OUT_MONO,
+					audioEncoding, maxJitter, AudioTrack.MODE_STREAM);
+
+			short[] buffer = new short[blockSize];
+			audioRecord.startRecording();
+			audioTrack.play();
+
 			while(true) {
 				//////////////////////////////////// Input dB Calculate ////////////////////////////////////
 
 				// short로 이뤄진 배열인 buffer는 원시 PCM 샘플을 AudioRecord 객체에서 받는다.
 				// double로 이뤄진 배열인 toTransform은 같은 데이터를 담지만 double 타입인데, FFT 클래스에서는 double타입이 필요해서이다.
 
-				short[] buffer = new short[blockSize];
-				audioRecord.startRecording();
+				//short[] buffer = new short[blockSize];
+				//audioRecord.startRecording();
 
 				int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
-
+				audioTrack.write(buffer, 0, bufferReadResult);
 				final int result = calculatePowerDb(buffer, 0, blockSize) + 90;
 
-			//	Log.w("Now Decibel", "input decibel : " + result);
+				Log.w("Now Decibel", "input decibel : " + result);
 				inDCB = result;
 
-				audioRecord.stop();
 
 				//////////////////////////////////// Output dB Calculate ////////////////////////////////////
 
