@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#EEEEEEEE">
+
+    <LinearLayout
+        android:id="@+id/GraphView1"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/view_border"
+        android:layout_margin="10dp"
+        android:paddingLeft="25dp"
+        android:layout_weight="0.8"
+        android:clickable="false"
+        android:orientation="vertical" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/view_border"
+        android:text="주변 소음 정도 "
+        android:textColor="#FF000000"
+        android:textSize="20sp"
+        android:layout_below="@id/GraphView1"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:id="@+id/text3"/>
+
+    <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="input dB"
+         android:textColor="#FF000000"
+         android:textSize="25sp"
+         android:layout_alignTop="@id/text3"
+         android:layout_toRightOf="@id/text3"
+         android:layout_marginLeft="20dp"
+         android:id="@+id/inputAmnt"/>
+
+     <ImageView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:background="@drawable/green"
+         android:layout_below="@id/GraphView1"
+         android:layout_marginTop="30dp"
+         android:layout_alignParentRight="true"
+         android:id="@+id/image1"/>
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/text3"
+         android:background="@drawable/view_border"
+         android:text="청취 음량 정도 "
+         android:textColor="#FF000000"
+         android:textSize="20sp"
+         android:layout_marginTop="30dp"
+         android:paddingLeft="10dp"
+         android:paddingRight="10dp"
+         android:id="@+id/text4"/>
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="output dB"
+         android:textColor="#FF000000"
+         android:textSize="25sp"
+         android:layout_alignTop="@id/text4"
+         android:layout_toRightOf="@id/text4"
+         android:layout_marginLeft="20dp"
+         android:id="@+id/listenAmnt"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/yellow"
+        android:layout_below="@id/image1"
+        android:layout_alignTop="@id/text4"
+        android:layout_alignParentRight="true"
+        android:id="@+id/image2"/>
+
+</RelativeLayout>

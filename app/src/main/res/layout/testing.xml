@@ -45,7 +45,7 @@
             android:background="#1E88E5"
             android:layout_centerInParent="true"
             materialdesign:max="100"
-            materialdesign:min="70"
+            materialdesign:min="0"
             materialdesign:showNumberIndicator="true" />
 
     </RelativeLayout>
