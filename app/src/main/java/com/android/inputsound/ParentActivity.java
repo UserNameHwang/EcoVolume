@@ -1,9 +1,16 @@
 package com.android.inputsound;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioFormat;
@@ -19,6 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -28,13 +36,16 @@ import com.android.inputsound.FFT.RealDoubleFFT;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.ButtonRectangle;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.util.List;
 
 public class ParentActivity extends AppCompatActivity {
 
 	private SlidingTabsBasicFragment fragment;
 
-	
+	private NotificationManager nm;
+
 	private final long INTERVAL = 2000;
 	private long backTime = 0;
 
@@ -82,16 +93,28 @@ public class ParentActivity extends AppCompatActivity {
 		boolean svcRunning = isServiceRunning("com.android.inputsound.Services");
 		Log.w("svc Check", "" + svcRunning);
 		if(svcRunning) {
-			Ecostarted = true;;
+			Ecostarted = true;
 		}
 		else {
 			Ecostarted = false;
 		}
 
+		// Notification Service 실행 여부 판단
+		boolean NsvcRunning = isServiceRunning("com.android.inputsound.NotificationServices");
+		Log.w("Nsvc Check", "" + NsvcRunning);
+		if(NsvcRunning) {
+			stopService(new Intent(getApplicationContext(), NotificationServices.class) );
+		}
+
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancel(2);
+
+
 		// default MIN_DECIBEL
 		SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
 
 		SaveUserSetting.SetLimitDcb((double) sp.getInt("MIN_DCB", 75));
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -241,17 +264,12 @@ public class ParentActivity extends AppCompatActivity {
 			Ecostarted = false;
 			ecoSwitch.setChecked(false);
 			EcoButton.setText("에코볼륨\n시작하기");
-	//		stopService(new Intent("com.android.inputsound.service"));
-	//		stopService(new Intent(getApplicationContext(), "com.android.inputsound.service"));
 			stopService(new Intent(getApplicationContext(), Services.class));
 		}else{
 			Ecostarted = true;
 			ecoSwitch.setChecked(true);
 			EcoButton.setText("에코볼륨\n중단하기");
-	//		Intent intent = new Intent("com.android.inputsound.service");
-			Intent intent = new Intent(getApplicationContext(), Services.class);
-
-			startService(intent);
+			startService(new Intent(getApplicationContext(), Services.class));
 		}
 
 		return;
@@ -259,7 +277,7 @@ public class ParentActivity extends AppCompatActivity {
 
 
 	// serviceName : manifest에서 설정한 서비스의 이름
-	public Boolean isServiceRunning(String serviceName) {
+	private Boolean isServiceRunning(String serviceName) {
 		ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 
 		List<ActivityManager.RunningServiceInfo> RunningService = manager.getRunningServices(Integer.MAX_VALUE);
@@ -279,12 +297,29 @@ public class ParentActivity extends AppCompatActivity {
 		long interval = tempTime - backTime;
 
 		if (interval >= 0 && INTERVAL >= interval) {
+
+			// 사용자가 설정한 하한 볼륨을 저장
 			SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
 			SharedPreferences.Editor editor = sp.edit();
 
 			editor.putInt("MIN_DCB", (int) SaveUserSetting.GetLimitDcb());
 			editor.commit();
 
+			// Notification Service Start
+			Intent intent = new Intent(getApplicationContext(), NotificationServices.class);
+
+			Bundle bitmapBundle = new Bundle();
+
+			Bitmap RedPoint = BitmapFactory.decodeResource(getResources(), R.drawable.red_point);
+			Bitmap GreenPoint = BitmapFactory.decodeResource(getResources(), R.drawable.green_point);
+
+			bitmapBundle.putParcelable("Red", RedPoint);
+			bitmapBundle.putParcelable("Green", GreenPoint);
+
+			intent.putExtra("bitmap", bitmapBundle);
+			startService(intent);
+
+			// Kill Process
 			android.os.Process.killProcess(android.os.Process.myPid());
 			super.onBackPressed();
 		} else {
@@ -304,6 +339,7 @@ public class ParentActivity extends AppCompatActivity {
 
 	@Override
 	protected void onDestroy() {
+		// 사용자가 설정한 하한 볼륨을 저장
 		SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 

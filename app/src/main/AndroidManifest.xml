@@ -15,9 +15,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name="Services">
             <intent-filter>
-                <action android:name="com.android.inputsound.service"/>
+                <action android:name="com.android.inputsound.services"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name="NotificationServices">
+            <intent-filter>
+                <action android:name="com.android.inputsound.notificationservices"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>

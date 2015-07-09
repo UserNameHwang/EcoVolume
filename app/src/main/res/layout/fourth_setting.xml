@@ -145,7 +145,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="70dp"
         materialdesign:max="100"
-        materialdesign:min="70"
+        materialdesign:min="75"
         materialdesign:showNumberIndicator="true" />
 
     <TextView
