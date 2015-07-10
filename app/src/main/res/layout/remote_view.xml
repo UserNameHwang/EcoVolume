@@ -16,7 +16,10 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginLeft="7dp"
         android:orientation="vertical">
 
         <TextView
@@ -35,8 +38,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginLeft="7dp"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="7dp"
         android:layout_weight="1">
@@ -66,8 +69,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginLeft="7dp"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="7dp"
         android:layout_weight="1">
@@ -94,15 +97,23 @@
 
     </RelativeLayout>
 
-<!--
-    <Button
-        android:id="@+id/notiNoiseButton"
+    <ImageView
+        android:id="@+id/notiCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/noti_button_off"
-        android:textColor="#000000"
-        android:textSize="14sp"
-        android:text="노이즈 캔슬링"/>
-        -->
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="6dp"
+        android:background="@drawable/cancel"/>
+
+    <!--
+        <Button
+            android:id="@+id/notiNoiseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/noti_button_off"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:text="노이즈 캔슬링"/>
+            -->
 </LinearLayout>

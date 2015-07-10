@@ -44,6 +44,7 @@ public class NotificationServices extends Service implements Runnable {
 
     private Notification.Builder builder;
     private BroadcastReceiver ecoBroadcastReceiver;
+    private BroadcastReceiver cancelBroadcastReceiver;
 
     @Nullable
     @Override
@@ -77,13 +78,20 @@ public class NotificationServices extends Service implements Runnable {
 
         Notification noti = builder.build();
 
-        Intent intent_ = new Intent("notiEcoButton");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent_,
+        Intent ecoIntent = new Intent("notiEcoButton");
+        PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent cancelIntent = new Intent("notiCancel");
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final RemoteViews contentiew = new RemoteViews(getPackageName(), R.layout.remote_view);
-        contentiew.setOnClickPendingIntent(R.id.notiEcoButton, pendingIntent);
 
+        contentiew.setOnClickPendingIntent(R.id.notiEcoButton, ecoPendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
+
+        // 에코버튼 서비스 실행 여부 확인
         EcoSvcRunning = isServiceRunning("com.android.inputsound.Services");
 
         if(EcoSvcRunning == true)
@@ -95,7 +103,6 @@ public class NotificationServices extends Service implements Runnable {
             @Override
             public void onReceive(Context context, Intent intent) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "" + EcoSvcRunning, Toast.LENGTH_LONG).show();
 
                 if(EcoSvcRunning == true) {
                     EcoSvcRunning = false;
@@ -110,10 +117,28 @@ public class NotificationServices extends Service implements Runnable {
             }
         };
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("notiEcoButton");
+        cancelBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // TODO Auto-generated method stub
+                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        registerReceiver(ecoBroadcastReceiver, intentFilter);
+                stopService(new Intent(getApplicationContext(), Services.class));
+                stopService(new Intent(getApplicationContext(), NotificationServices.class));
+
+                Toast.makeText(getApplicationContext(),"에코볼륨 서비스가 종료됩니다!", Toast.LENGTH_LONG).show();
+                nm.cancelAll();
+            }
+        };
+
+        IntentFilter ecoFilter = new IntentFilter();
+        ecoFilter.addAction("notiEcoButton");
+
+        IntentFilter cancelFilter = new IntentFilter();
+        cancelFilter.addAction("notiCancel");
+
+        registerReceiver(ecoBroadcastReceiver, ecoFilter);
+        registerReceiver(cancelBroadcastReceiver, cancelFilter);
 
         noti.contentView = contentiew;
         nm.notify(2, noti);
@@ -127,6 +152,7 @@ public class NotificationServices extends Service implements Runnable {
         Log.w("ServiceLog", "Notification Service Destroyed");
 
         unregisterReceiver(ecoBroadcastReceiver);
+        unregisterReceiver(cancelBroadcastReceiver);
         notiStarted = false;
         super.onDestroy();
     }
@@ -164,20 +190,31 @@ public class NotificationServices extends Service implements Runnable {
 
         Notification noti = builder.build();
 
-        Intent intent_ = new Intent("notiEcoButton");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent_,
+        Intent ecoIntent = new Intent("notiEcoButton");
+        PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent cancelIntent = new Intent("notiCancel");
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final RemoteViews contentiew = new RemoteViews(getPackageName(), R.layout.remote_view);
-        contentiew.setOnClickPendingIntent(R.id.notiEcoButton, pendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiEcoButton, ecoPendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
 
         contentiew.setImageViewBitmap(R.id.notiEcoImage, bitmap);
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("notiEcoButton");
+        IntentFilter ecoFilter = new IntentFilter();
+        ecoFilter.addAction("notiEcoButton");
+
+        IntentFilter cancelFilter = new IntentFilter();
+        cancelFilter.addAction("notiCancel");
 
         unregisterReceiver(ecoBroadcastReceiver);
-        registerReceiver(ecoBroadcastReceiver, intentFilter);
+        unregisterReceiver(cancelBroadcastReceiver);
+
+        registerReceiver(ecoBroadcastReceiver, ecoFilter);
+        registerReceiver(cancelBroadcastReceiver, cancelFilter);
 
         noti.contentView = contentiew;
         nm.notify(2, noti);
