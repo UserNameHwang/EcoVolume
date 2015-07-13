@@ -54,15 +54,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
                     <TextView
@@ -77,15 +77,17 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
-                    <Switch
+                    <com.gc.materialdesign.views.Switch
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:background="#1E88E5"
+                        materialdesign:check="true" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -96,18 +98,37 @@
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_shape"
-                    android:text="@string/timeAlarm"
-                    android:textSize="20sp"
-                    android:textColor="#FF000000"
-                    android:id="@+id/listenTimeAlarm"/>
+                    android:layout_weight="3"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-                <Switch
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_rect_material"
+                        android:gravity="center_vertical"
+                        android:text="@string/timeAlarm"
+                        android:textSize="20sp"
+                        android:textColor="#FF000000"
+                        android:id="@+id/listenTimeAlarm"/>
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.gc.materialdesign.views.Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#1E88E5"
+                        materialdesign:check="true" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -128,5 +149,23 @@
             android:textColor="#FF000000"
             android:background="@drawable/button_shape"
             android:id="@+id/lowLimitSet"/>
+
+        <com.gc.materialdesign.views.Slider
+            android:id="@+id/lowLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#1E88E5"
+            materialdesign:max="100"
+            materialdesign:min="75"
+            materialdesign:showNumberIndicator="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" dB"
+            android:textSize="20sp"
+            android:textColor="#FF000000"
+
+            android:id="@+id/DCBtext"/>
     </RelativeLayout>
 </LinearLayout>
