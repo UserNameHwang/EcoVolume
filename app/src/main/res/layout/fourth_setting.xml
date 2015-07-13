@@ -37,6 +37,7 @@
                 android:textColor="#FF000000"
                 android:text="에코볼륨 알림"
                 android:id="@+id/ecoAlarm"/>
+
             <LinearLayout
                 android:id="@+id/upperAlertLay"
                 android:layout_width="match_parent"
@@ -44,7 +45,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <com.gc.materialdesign.views.Switch
+                <com.gc.materialdesign.views.CheckBox
                     android:id="@+id/upperAlert"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -91,7 +92,7 @@
                     android:orientation="vertical"
                     android:id="@+id/highNoiseAlertLay">
 
-                    <com.gc.materialdesign.views.Switch
+                    <com.gc.materialdesign.views.CheckBox
                         android:id="@+id/highNoiseAlert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -133,7 +134,7 @@
                     android:orientation="vertical"
                     android:id="@+id/listenTimeAlertLay">
 
-                    <com.gc.materialdesign.views.Switch
+                    <com.gc.materialdesign.views.CheckBox
                         android:id="@+id/listenTimeAlert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

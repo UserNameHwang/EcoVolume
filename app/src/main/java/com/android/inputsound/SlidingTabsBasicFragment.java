@@ -4,6 +4,7 @@ import com.android.view.LineGraphSetting;
 import com.android.view.SlidingTabLayout;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.CheckBox;
 import com.gc.materialdesign.views.Slider;
 import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
 import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
@@ -278,61 +279,72 @@ public class SlidingTabsBasicFragment extends Fragment {
 						}
 					});
 
-					LinearLayout upperAlertLay, highNoiseAlertLay, listenTimeAlertLay;
+					final LinearLayout upperAlertLay, highNoiseAlertLay, listenTimeAlertLay;
 					upperAlertLay = (LinearLayout)settingView.findViewById(R.id.upperAlertLay);
 					highNoiseAlertLay = (LinearLayout)settingView.findViewById(R.id.highNoiseAlertLay);
 					listenTimeAlertLay = (LinearLayout)settingView.findViewById(R.id.listenTimeAlertLay);
 
-					final com.gc.materialdesign.views.Switch upperAlert, highNoiseAlert, listenTimeAlert;
-					upperAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.upperAlert);
-					highNoiseAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.highNoiseAlert);
-					listenTimeAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.listenTimeAlert);
+					final com.gc.materialdesign.views.CheckBox upperAlert, highNoiseAlert, listenTimeAlert;
+					upperAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.upperAlert);
+					highNoiseAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.highNoiseAlert);
+					listenTimeAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.listenTimeAlert);
 
-					upperAlertLay.setOnClickListener(new View.OnClickListener() {
+					//////////////////////////////////////////////////////////////////////////////////////
+					upperAlert.setOncheckListener(new CheckBox.OnCheckListener() {
 						@Override
-						public void onClick(View v) {
-							if(upperAlert.isCheck() == true){
-								;
+						public void onCheck(boolean b) {
+							if(b == false){
+								upperAlert.setChecked(false);
+								highNoiseAlert.setChecked(false);
+								listenTimeAlert.setChecked(false);
+
+								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										return true;
+									}
+								});
+
+								listenTimeAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										return true;
+									}
+								});
 							}
 							else{
-								;
+								upperAlert.setChecked(true);
+
+								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										return false;
+									}
+								});
+
+								listenTimeAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										return false;
+									}
+								});
 							}
 						}
 					});
 
-					/*
-					upperAlertSwitch.setOnTouchListener(new View.OnTouchListener() {
+					highNoiseAlert.setOncheckListener(new CheckBox.OnCheckListener() {
 						@Override
-						public boolean onTouch(View v, MotionEvent event) {
-							if(upperAlertSwitch.isCheck() == true){
-								upperAlertSwitch.setChecked(false);
+						public void onCheck(boolean b) {
 
-								highNoiseAlert.setChecked(false);
-								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
-									@Override
-									public boolean onTouch(View v, MotionEvent event) {
-										return true;
-									}
-								});
-							}
-							else if(upperAlertSwitch.isCheck() == false) {
-								upperAlertSwitch.setChecked(true);
-
-								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
-									@Override
-									public boolean onTouch(View v, MotionEvent event) {
-										if(highNoiseAlert.isCheck() == true)
-											highNoiseAlert.setChecked(false);
-										else
-											highNoiseAlert.setChecked(true);
-
-										return true;
-									}
-								});
-							}
-							return true;
 						}
-					}); */
+					});
+
+					listenTimeAlert.setOncheckListener(new CheckBox.OnCheckListener() {
+						@Override
+						public void onCheck(boolean b) {
+
+						}
+					});
 
 					container.addView(settingView);
 					LastCheck++;
