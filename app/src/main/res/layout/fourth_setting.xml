@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:paddingBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/background_rect_material"
         android:orientation="vertical">
 
@@ -31,19 +31,26 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:textSize="25sp"
                 android:background="@drawable/background_rect_material"
+                android:gravity="center_vertical"
                 android:textColor="#FF000000"
                 android:text="에코볼륨 알림"
                 android:id="@+id/ecoAlarm"/>
+            <LinearLayout
+                android:id="@+id/upperAlertLay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <com.gc.materialdesign.views.Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#1E88E5"
-                materialdesign:check="true"
-                android:gravity="right" />
+                <com.gc.materialdesign.views.Switch
+                    android:id="@+id/upperAlert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#1E88E5"
+                    materialdesign:check="true"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -62,13 +69,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_rect_material"
+                        android:background="@drawable/view_border"
                         android:gravity="center_vertical"
                         android:text="@string/highAlarm"
                         android:textSize="20sp"
@@ -80,14 +87,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:id="@+id/highNoiseAlertLay">
 
                     <com.gc.materialdesign.views.Switch
+                        android:id="@+id/highNoiseAlert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="#1E88E5"
-                        materialdesign:check="true" />
+                        materialdesign:check="false" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -102,13 +111,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_rect_material"
+                        android:background="@drawable/view_border"
                         android:gravity="center_vertical"
                         android:text="@string/timeAlarm"
                         android:textSize="20sp"
@@ -120,52 +129,142 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:id="@+id/listenTimeAlertLay">
 
                     <com.gc.materialdesign.views.Switch
+                        android:id="@+id/listenTimeAlert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="#1E88E5"
-                        materialdesign:check="true" />
+                        materialdesign:check="false" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/SettingLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:gravity="center"
-        android:paddingTop="20dp"
-        android:background="@drawable/background_rect_material">
+        android:layout_marginTop="10dp"
+        android:background="@drawable/background_rect_material"
+        android:orientation="vertical">
 
-    <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="하한 설정"
-            android:textSize="20sp"
-            android:textColor="#FF000000"
-            android:background="@drawable/button_shape"
-            android:id="@+id/lowLimitSet"/>
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <com.gc.materialdesign.views.Slider
-            android:id="@+id/lowLimit"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:background="@drawable/background_rect_material"
+                android:gravity="center_vertical"
+                android:textColor="#FF000000"
+                android:text="에코볼륨 설정" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#1E88E5"
-            materialdesign:max="100"
-            materialdesign:min="75"
-            materialdesign:showNumberIndicator="true" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="하한 설정"
+                    android:textSize="20sp"
+                    android:textColor="#FF000000"
+                    android:background="@drawable/view_border"
+                    android:id="@+id/lowLimitSet"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.gc.materialdesign.views.Slider
+                    android:id="@+id/lowLimit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#1E88E5"
+                    materialdesign:max="100"
+                    materialdesign:min="75"
+                    materialdesign:showNumberIndicator="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" dB"
+                    android:textSize="20sp"
+                    android:textColor="#FF000000"
+                    android:id="@+id/DCBtext"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="dB"
-            android:textSize="20sp"
-            android:textColor="#FF000000"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            android:id="@+id/DCBtext"/>
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/view_border"
+                    android:text="음량 기준표"
+                    android:textSize="20sp"
+                    android:textColor="#FF000000"
+                    android:id="@+id/Standard"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

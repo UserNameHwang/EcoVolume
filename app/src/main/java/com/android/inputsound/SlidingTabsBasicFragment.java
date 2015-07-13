@@ -278,6 +278,62 @@ public class SlidingTabsBasicFragment extends Fragment {
 						}
 					});
 
+					LinearLayout upperAlertLay, highNoiseAlertLay, listenTimeAlertLay;
+					upperAlertLay = (LinearLayout)settingView.findViewById(R.id.upperAlertLay);
+					highNoiseAlertLay = (LinearLayout)settingView.findViewById(R.id.highNoiseAlertLay);
+					listenTimeAlertLay = (LinearLayout)settingView.findViewById(R.id.listenTimeAlertLay);
+
+					final com.gc.materialdesign.views.Switch upperAlert, highNoiseAlert, listenTimeAlert;
+					upperAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.upperAlert);
+					highNoiseAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.highNoiseAlert);
+					listenTimeAlert = (com.gc.materialdesign.views.Switch)settingView.findViewById(R.id.listenTimeAlert);
+
+					upperAlertLay.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							if(upperAlert.isCheck() == true){
+								;
+							}
+							else{
+								;
+							}
+						}
+					});
+
+					/*
+					upperAlertSwitch.setOnTouchListener(new View.OnTouchListener() {
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							if(upperAlertSwitch.isCheck() == true){
+								upperAlertSwitch.setChecked(false);
+
+								highNoiseAlert.setChecked(false);
+								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										return true;
+									}
+								});
+							}
+							else if(upperAlertSwitch.isCheck() == false) {
+								upperAlertSwitch.setChecked(true);
+
+								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+									@Override
+									public boolean onTouch(View v, MotionEvent event) {
+										if(highNoiseAlert.isCheck() == true)
+											highNoiseAlert.setChecked(false);
+										else
+											highNoiseAlert.setChecked(true);
+
+										return true;
+									}
+								});
+							}
+							return true;
+						}
+					}); */
+
 					container.addView(settingView);
 					LastCheck++;
 					return settingView;
@@ -355,11 +411,15 @@ public class SlidingTabsBasicFragment extends Fragment {
 					MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
 
 			int maxJitter = AudioTrack.getMinBufferSize(frequency, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+
+			//////// 소리 출력 부분 ////////
 			AudioTrack audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, 8000, AudioFormat.CHANNEL_OUT_MONO,
 					audioEncoding, maxJitter, AudioTrack.MODE_STREAM);
 
 			short[] buffer = new short[blockSize];
 			audioRecord.startRecording();
+
+			//////// 소리 출력 부분 ////////
 			audioTrack.play();
 
 			while(true) {
@@ -372,7 +432,10 @@ public class SlidingTabsBasicFragment extends Fragment {
 				//audioRecord.startRecording();
 
 				int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
+
+				//////// 소리 출력 부분 ////////
 				audioTrack.write(buffer, 0, bufferReadResult);
+
 				final int result = calculatePowerDb(buffer, 0, blockSize) + 90;
 
 				Log.w("Now Decibel", "input decibel : " + result);
