@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,179 +7,126 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="#EEEEEEEE">
+    android:background="#EEEEEEEE"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/AlertLayout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/view_border"
-        android:id="@+id/box1"/>
-
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:background="@drawable/button_shape"
-        android:layout_marginLeft="25dp"
-        android:textColor="#FF000000"
-        android:text="에코볼륨 알림"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:id="@+id/ecoAlarm"/>
+        android:layout_weight="0.5"
+        android:paddingBottom="20dp"
+        android:background="@drawable/background_rect_material"
+        android:orientation="vertical">
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/ecoAlarm"
-        android:layout_marginTop="22dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
-        android:text="@string/highAlarm"
-        android:textSize="20sp"
-        android:textColor="#FF000000"
-        android:layout_below="@+id/ecoAlarm"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_alignRight="@id/ecoAlarm"
-        android:layout_alignLeft="@id/box1"
-        android:padding="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:id="@+id/highNoiseAlarm"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="25sp"
+                android:background="@drawable/background_rect_material"
+                android:textColor="#FF000000"
+                android:text="에코볼륨 알림"
+                android:id="@+id/ecoAlarm"/>
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/highNoiseAlarm"
-        android:layout_alignTop="@id/highNoiseAlarm"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="2dp"/>
+            <com.gc.materialdesign.views.Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#1E88E5"
+                materialdesign:check="true"
+                android:gravity="right" />
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
-        android:text="@string/timeAlarm"
-        android:textSize="20sp"
-        android:textColor="#FF000000"
-        android:layout_below="@+id/highNoiseAlarm"
-        android:layout_marginTop="30dp"
-        android:layout_alignRight="@id/ecoAlarm"
-        android:layout_alignLeft="@id/highNoiseAlarm"
-        android:padding="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        android:id="@+id/listenTimeAlarm"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="1">
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/listenTimeAlarm"
-        android:layout_alignTop="@id/listenTimeAlarm"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="2dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical">
 
-    <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_rect_material"
+                        android:gravity="center_vertical"
+                        android:text="@string/highAlarm"
+                        android:textSize="20sp"
+                        android:textColor="#FF000000"
+                        android:id="@+id/highNoiseAlarm"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_shape"
+                    android:text="@string/timeAlarm"
+                    android:textSize="20sp"
+                    android:textColor="#FF000000"
+                    android:id="@+id/listenTimeAlarm"/>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/box1"
-        android:background="@drawable/view_border"
-        android:layout_marginTop="40dp"
-        android:id="@+id/box2"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:background="@drawable/background_rect_material">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/box1"
-        android:layout_marginTop="25dp"
-        android:textSize="30sp"
-        android:background="@drawable/button_shape"
-        android:layout_marginLeft="25dp"
-        android:textColor="#FF000000"
-        android:text="에코볼륨 설정"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:id="@+id/ecoSetting"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ecoSetting"
-        android:layout_marginTop="30dp"
-        android:text="하한 설정"
-        android:textSize="20sp"
-        android:textColor="#FF000000"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/button_shape"
-        android:id="@+id/lowLimitSet"/>
-
-    <!--
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@id/box2"
-        android:layout_alignTop="@id/lowLimitSet"
-        android:layout_toRightOf="@id/lowLimitSet"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="70dp"
-        android:max="25"
-        android:id="@+id/lowLimit"/>
-    -->
-    <com.gc.materialdesign.views.Slider
-        android:id="@+id/lowLimit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#1E88E5"
-        android:layout_alignRight="@id/box2"
-        android:layout_alignTop="@id/lowLimitSet"
-        android:layout_toRightOf="@id/lowLimitSet"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="70dp"
-        materialdesign:max="100"
-        materialdesign:min="75"
-        materialdesign:showNumberIndicator="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/lowLimitSet"
-        android:layout_alignParentRight="true"
-        android:text="(test dB)"
-        android:textSize="20sp"
-        android:textColor="#FF000000"
-        android:layout_marginTop="3dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/DCBtext"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lowLimitSet"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@id/lowLimitSet"
-        android:background="@drawable/button_shape"
-        android:text="음량 기준표"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:textSize="20sp"
-        android:textColor="#FF000000"
-        android:id="@+id/Standard"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/Standard"
-        android:layout_toRightOf="@id/Standard"
-        android:layout_marginLeft="50dp"
-        android:background="@drawable/button"/>
-</RelativeLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="하한 설정"
+            android:textSize="20sp"
+            android:textColor="#FF000000"
+            android:background="@drawable/button_shape"
+            android:id="@+id/lowLimitSet"/>
+    </RelativeLayout>
+</LinearLayout>
