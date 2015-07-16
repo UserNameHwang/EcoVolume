@@ -262,11 +262,13 @@ public class ParentActivity extends AppCompatActivity {
 
 		if(Ecostarted){
 			Ecostarted = false;
+			SaveUserSetting.setEcoVolumeStarted(false);
 			ecoSwitch.setChecked(false);
 			EcoButton.setText("에코볼륨\n시작하기");
 			stopService(new Intent(getApplicationContext(), Services.class));
 		}else{
 			Ecostarted = true;
+			SaveUserSetting.setEcoVolumeStarted(true);
 			ecoSwitch.setChecked(true);
 			EcoButton.setText("에코볼륨\n중단하기");
 			startService(new Intent(getApplicationContext(), Services.class));

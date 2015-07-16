@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -167,9 +168,11 @@ public class SlidingTabsBasicFragment extends Fragment {
 					if(svcRunning) {
 						ecoSwitch.setChecked(true);
 						EcoButton.setText("에코볼륨\n중단하기");
+						SaveUserSetting.setEcoVolumeStarted(true);
 					}
 					else {
 						EcoButton.setText("에코볼륨\n시작하기");
+						SaveUserSetting.setEcoVolumeStarted(false);
 					}
 					container.addView(homeView);
 
@@ -289,6 +292,23 @@ public class SlidingTabsBasicFragment extends Fragment {
 					highNoiseAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.highNoiseAlert);
 					listenTimeAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.listenTimeAlert);
 
+					highNoiseAlert.setOncheckListener(new CheckBox.OnCheckListener() {
+						@Override
+						public void onCheck(boolean b) {
+							SaveUserSetting.setNoiseAlertStarted(b);
+							if(SaveUserSetting.isEcoVolumeStarted() == false && b == true)
+								Toast.makeText(getActivity().getApplicationContext(), "에코볼륨이 시작되지 않아 알림이 나타나지 않습니다.", Toast.LENGTH_LONG).show();
+
+						}
+					});
+
+					listenTimeAlert.setOncheckListener(new CheckBox.OnCheckListener() {
+						@Override
+						public void onCheck(boolean b) {
+							SaveUserSetting.setTimeAlertStarted(b);
+						}
+					});
+
 					//////////////////////////////////////////////////////////////////////////////////////
 					upperAlert.setOncheckListener(new CheckBox.OnCheckListener() {
 						@Override
@@ -301,6 +321,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
 									@Override
 									public boolean onTouch(View v, MotionEvent event) {
+										SaveUserSetting.setNoiseAlertStarted(false);
 										return true;
 									}
 								});
@@ -308,6 +329,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 								listenTimeAlert.setOnTouchListener(new View.OnTouchListener() {
 									@Override
 									public boolean onTouch(View v, MotionEvent event) {
+										SaveUserSetting.setTimeAlertStarted(false);
 										return true;
 									}
 								});
@@ -329,20 +351,6 @@ public class SlidingTabsBasicFragment extends Fragment {
 									}
 								});
 							}
-						}
-					});
-
-					highNoiseAlert.setOncheckListener(new CheckBox.OnCheckListener() {
-						@Override
-						public void onCheck(boolean b) {
-
-						}
-					});
-
-					listenTimeAlert.setOncheckListener(new CheckBox.OnCheckListener() {
-						@Override
-						public void onCheck(boolean b) {
-
 						}
 					});
 

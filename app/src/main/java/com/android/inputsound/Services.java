@@ -20,8 +20,12 @@ import android.util.Log;
 public class Services extends Service implements Runnable {
 
     private boolean ecoStarted = false;
+    private boolean VolumeAlertStarted = false;
+
     private Thread ecoThread;
+    private VolumeAlertThread va;
     private double MIN_DECIBEL = 75;
+    private double SPL= 75;
 
     private NotificationCompat.Builder builder;
     private int AlertDecibel;
@@ -34,36 +38,11 @@ public class Services extends Service implements Runnable {
 
     @Override
     public void onCreate() {
-
-        builder = new NotificationCompat.Builder(this);
-
-        // 작은 아이콘 이미지.
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        // 알림이 출력될 때 상단에 나오는 문구.
-        builder.setTicker("사용자의 볼륨이 너무 높아요!");
-        // 알림 출력 시간.
-        builder.setWhen(System.currentTimeMillis());
-        // 알림 제목.
-        builder.setContentTitle("에코볼륨");
-        // 프로그래스 바.
-        //builder.setProgress(100, 50, false);
-        // 알림 내용.
-        builder.setContentText("사용자의 볼륨이 너무 높아요!");
-        // 알림시 사운드, 진동, 불빛을 설정 가능.
-        builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
-        // 알림 터치시 반응.
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        //builder.setContentIntent(pendingIntent);
-        // 알림 터치시 반응 후 알림 삭제 여부.
-        builder.setAutoCancel(true);
-        // 우선순위.
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        //진동
-        builder.setVibrate(new long[]{1000});
-
         ecoThread = new Thread(this);
+        va = new VolumeAlertThread(this);
 
         ecoThread.start();
+        va.start();
     }
 
     @Override
@@ -86,6 +65,7 @@ public class Services extends Service implements Runnable {
         Log.w("ServiceLog", "Service Destroyed");
 
         ecoStarted = false;
+        VolumeAlertStarted = false;
         super.onDestroy();
     }
 
@@ -135,21 +115,7 @@ public class Services extends Service implements Runnable {
                 else
                     dB = Sensitivity;
                 // 실제 출력 볼륨 dB : 감도의 데시벨 - 현재 전력의 데시벨
-                double SPL = Sensitivity - dB;
-
-
-                if(mCurvol >= 5) {
-                    AlertDecibel++;
-                }
-                else {
-                    if(AlertDecibel > 0 )
-                        AlertDecibel = AlertDecibel - 2;
-                }
-                if(AlertDecibel==5) {
-                    mHandler.sendEmptyMessage(0);
-
-                    //AlertDecibel = 0;
-                }
+                SPL = Sensitivity - dB;
 
                 Log.w("Current Decibel", "decibel : " + SPL);
 
@@ -165,4 +131,72 @@ public class Services extends Service implements Runnable {
         }
     }
 
+    private class VolumeAlertThread extends Thread {
+
+        public VolumeAlertThread(Context c) {
+            builder = new NotificationCompat.Builder(c);
+
+            // 작은 아이콘 이미지.
+            builder.setSmallIcon(R.mipmap.ic_launcher);
+            // 알림이 출력될 때 상단에 나오는 문구.
+            builder.setTicker("사용자의 볼륨이 너무 높아요!");
+            // 알림 출력 시간.
+            builder.setWhen(System.currentTimeMillis());
+            // 알림 제목.
+            builder.setContentTitle("에코볼륨");
+            // 프로그래스 바.
+            //builder.setProgress(100, 50, false);
+            // 알림 내용.
+            builder.setContentText("사용자의 볼륨이 너무 높아요!");
+            // 알림시 사운드, 진동, 불빛을 설정 가능.
+            builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
+            // 알림 터치시 반응.
+            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            //builder.setContentIntent(pendingIntent);
+            // 알림 터치시 반응 후 알림 삭제 여부.
+            builder.setAutoCancel(true);
+            // 우선순위.
+            builder.setPriority(NotificationCompat.PRIORITY_MAX);
+            //진동
+            builder.setVibrate(new long[]{1000});
+
+        }
+
+        @Override
+        public void run() {
+            int timeCount = 0;
+
+            while(true) {
+
+                VolumeAlertStarted = SaveUserSetting.isNoiseAlertStarted();
+                if(VolumeAlertStarted == true) {
+                    try {
+                        if (SPL >= 90) {
+                            timeCount++;
+                        } else {
+                            timeCount = 0;
+                        }
+
+                        if(timeCount == 15) {
+                            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                            manager.notify(1, builder.build());
+                        }
+                        Thread.sleep(1000);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+                else{
+                    if(ecoStarted == true) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
