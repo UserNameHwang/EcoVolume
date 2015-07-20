@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EcoVolume</string>
+    <string name="app_name">EcoVolume2</string>
 
     <string name="highAlarm">고위험 소음 알림</string>
     <string name="timeAlarm">적정 청취시간 알림</string>
