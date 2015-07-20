@@ -70,7 +70,12 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
         int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
 
-        AudioRecord audioRecord = SaveDCB.getAudioRecord();
+        AudioRecord audioRecord;
+        if(SaveDCB.getAudioRecord() == null)
+            audioRecord = new AudioRecord(
+                    MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
+        else
+             audioRecord = SaveDCB.getAudioRecord();
 
         int maxJitter = AudioTrack.getMinBufferSize(frequency, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
 
@@ -81,8 +86,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
         audioTrack.play();
         while (cancelingStarted) {
-                if(audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED)
-                    audioRecord.startRecording();
+                audioRecord.startRecording();
                 int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
 
                 audioTrack.write(buffer, 0, bufferReadResult);
