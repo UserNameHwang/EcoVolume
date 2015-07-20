@@ -1,5 +1,7 @@
 package com.android.inputsound;
 
+import android.media.AudioRecord;
+
 /**
  * Created by Sungjung on 2015-06-23.
  */
@@ -28,6 +30,15 @@ public class SaveDCB {
         SaveDCB.inDCB[4] = inDCB;
     }
 
+    public static AudioRecord getAudioRecord() {
+        return audioRecord;
+    }
+
+    public static void setAudioRecord(AudioRecord audioRecord) {
+        SaveDCB.audioRecord = audioRecord;
+    }
+
     private static int[] inDCB = new int[5];
     private static int[] outDCB = new int[5];
+    private static AudioRecord audioRecord;
 }

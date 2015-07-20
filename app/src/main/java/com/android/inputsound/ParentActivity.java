@@ -1,13 +1,9 @@
 package com.android.inputsound;
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,26 +14,19 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RemoteViews;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.inputsound.FFT.RealDoubleFFT;
-import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.ButtonRectangle;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
 import java.util.List;
 
 public class ParentActivity extends AppCompatActivity {
@@ -55,6 +44,7 @@ public class ParentActivity extends AppCompatActivity {
 	private int MIN_DECIBEL=75;
 
 	private boolean Ecostarted = false;
+	private boolean NCstarted = false;
 
 	private RecordAudio recordTask;
 	private boolean started = false;
@@ -90,13 +80,22 @@ public class ParentActivity extends AppCompatActivity {
 		indBValue = (TextView)findViewById(R.id.inputDB);
 
 		// Service 실행 여부 판단
-		boolean svcRunning = isServiceRunning("com.android.inputsound.Services");
-		Log.w("svc Check", "" + svcRunning);
-		if(svcRunning) {
+		boolean EcosvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
+		Log.w("svc Check", "" + EcosvcRunning);
+		if(EcosvcRunning) {
 			Ecostarted = true;
 		}
 		else {
 			Ecostarted = false;
+		}
+
+		boolean NCsvcRunning = isServiceRunning("com.android.inputsound.NoiseCancelingServices");
+		Log.w("svc Check", "" + NCsvcRunning);
+		if(NCsvcRunning) {
+			NCstarted = true;
+		}
+		else {
+			NCstarted = false;
 		}
 
 		// Notification Service 실행 여부 판단
@@ -265,16 +264,35 @@ public class ParentActivity extends AppCompatActivity {
 			SaveUserSetting.setEcoVolumeStarted(false);
 			ecoSwitch.setChecked(false);
 			EcoButton.setText("에코볼륨\n시작하기");
-			stopService(new Intent(getApplicationContext(), Services.class));
+			stopService(new Intent(getApplicationContext(), EcoVolumeServices.class));
 		}else{
 			Ecostarted = true;
 			SaveUserSetting.setEcoVolumeStarted(true);
 			ecoSwitch.setChecked(true);
 			EcoButton.setText("에코볼륨\n중단하기");
-			startService(new Intent(getApplicationContext(), Services.class));
+			startService(new Intent(getApplicationContext(), EcoVolumeServices.class));
 		}
+	}
 
-		return;
+	// NoiseCanceling onClick Function
+	public void onNoiseCancel(View v){
+
+		ButtonRectangle NoiseButton = (ButtonRectangle) v;
+		com.gc.materialdesign.views.Switch noiseSwitch = (com.gc.materialdesign.views.Switch)findViewById(R.id.noiseSwitch);
+
+		if(NCstarted){
+			NCstarted = false;
+			SaveUserSetting.setNoiseCancelStarted(false);
+			noiseSwitch.setChecked(false);
+			NoiseButton.setText("노이즈캔슬링\n시작하기");
+			stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
+		}else{
+			NCstarted = true;
+			SaveUserSetting.setNoiseAlertStarted(true);
+			noiseSwitch.setChecked(true);
+			NoiseButton.setText("노이즈캔슬링\n중단하기");
+			startService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
+		}
 	}
 
 
@@ -305,7 +323,7 @@ public class ParentActivity extends AppCompatActivity {
 			SharedPreferences.Editor editor = sp.edit();
 
 			editor.putInt("MIN_DCB", (int) SaveUserSetting.GetLimitDcb());
-			editor.commit();
+			editor.apply();
 
 			// Notification Service Start
 			Intent intent = new Intent(getApplicationContext(), NotificationServices.class);
@@ -346,7 +364,7 @@ public class ParentActivity extends AppCompatActivity {
 		SharedPreferences.Editor editor = sp.edit();
 
 		editor.putInt("MIN_DCB", (int) SaveUserSetting.GetLimitDcb());
-		editor.commit();
+		editor.apply();
 
 		super.onDestroy();
 	}

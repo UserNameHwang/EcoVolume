@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,7 +18,7 @@ import android.util.Log;
 /**
  * Created by Administrator on 2015-06-21.
  */
-public class Services extends Service implements Runnable {
+public class EcoVolumeServices extends Service implements Runnable {
 
     private boolean ecoStarted = false;
     private boolean VolumeAlertStarted = false;
@@ -47,14 +48,14 @@ public class Services extends Service implements Runnable {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w("ServiceLog", "Service Started");
+        Log.w("ServiceLog", "EcoService Started");
 
         ecoStarted = true;
         if(ecoThread.getState().toString().equals("TERMINATED")){
             ecoThread = new Thread(this);
 
             ecoThread.start();
-            Log.w("ServiceLog", "Service Restarted");
+            Log.w("ServiceLog", "EcoService Restarted");
         }
 
         return START_REDELIVER_INTENT;
@@ -62,7 +63,7 @@ public class Services extends Service implements Runnable {
 
     @Override
     public void onDestroy() {
-        Log.w("ServiceLog", "Service Destroyed");
+        Log.w("ServiceLog", "EcoService Destroyed");
 
         ecoStarted = false;
         VolumeAlertStarted = false;
@@ -119,7 +120,11 @@ public class Services extends Service implements Runnable {
 
                 Log.w("Current Decibel", "decibel : " + SPL);
 
-                MIN_DECIBEL = SaveUserSetting.GetLimitDcb();
+                SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
+                MIN_DECIBEL = sp.getInt("MIN_DCB", 75);
+        //        MIN_DECIBEL = SaveUserSetting.GetLimitDcb();
+                Log.w("Minimum Decibel", "decibel : " + MIN_DECIBEL);
+
                 if ((int)SPL > MIN_DECIBEL)
                     audiomanager.setStreamVolume(audiomanager.STREAM_MUSIC,
                             mCurvol - 1, audiomanager.FLAG_REMOVE_SOUND_AND_VIBRATE);

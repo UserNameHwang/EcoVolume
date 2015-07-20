@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         EcoButton = (Button)findViewById(R.id.EcoButton);
 
         // Service 실행 여부 판단
-        boolean svcRunning = isServiceRunning("com.android.inputsound.Services");
+        boolean svcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
         Log.w("svc Check", "" + svcRunning);
         if(svcRunning) {
             Ecostarted = true;

@@ -10,26 +10,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.AudioManager;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 2015-06-21.
- */
+
 public class NotificationServices extends Service implements Runnable {
 
     private boolean notiStarted = false;
@@ -44,6 +34,7 @@ public class NotificationServices extends Service implements Runnable {
 
     private Notification.Builder builder;
     private BroadcastReceiver ecoBroadcastReceiver;
+    private BroadcastReceiver noiseBroadcastReceiver;
     private BroadcastReceiver cancelBroadcastReceiver;
 
     @Nullable
@@ -82,6 +73,10 @@ public class NotificationServices extends Service implements Runnable {
         PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent noiseIntent = new Intent("notiNoiseButton");
+        PendingIntent noisePendingIntent = PendingIntent.getBroadcast(this, 0, noiseIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent cancelIntent = new Intent("notiCancel");
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -89,15 +84,24 @@ public class NotificationServices extends Service implements Runnable {
         final RemoteViews contentiew = new RemoteViews(getPackageName(), R.layout.remote_view);
 
         contentiew.setOnClickPendingIntent(R.id.notiEcoButton, ecoPendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiNoiseButton, noisePendingIntent);
         contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
 
         // 에코버튼 서비스 실행 여부 확인
-        EcoSvcRunning = isServiceRunning("com.android.inputsound.Services");
+        EcoSvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
 
         if(EcoSvcRunning == true)
             contentiew.setImageViewBitmap(R.id.notiEcoImage, GreenPoint);
         else
             contentiew.setImageViewBitmap(R.id.notiEcoImage, RedPoint);
+
+        NoiseSvcRunning = isServiceRunning("com.android.inputsound.NoiseCancelingServices");
+
+        // 노이즈버튼 서비스 실행 여부 확인
+        if(NoiseSvcRunning == true)
+            contentiew.setImageViewBitmap(R.id.notiNoiseImage, GreenPoint);
+        else
+            contentiew.setImageViewBitmap(R.id.notiNoiseImage, RedPoint);
 
         ecoBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -107,12 +111,30 @@ public class NotificationServices extends Service implements Runnable {
                 if(EcoSvcRunning == true) {
                     EcoSvcRunning = false;
                     refreshEcoNotification(RedPoint);
-                    stopService(new Intent(getApplicationContext(), Services.class));
+                    stopService(new Intent(getApplicationContext(), EcoVolumeServices.class));
                 }
                 else {
                     EcoSvcRunning = true;
                     refreshEcoNotification(GreenPoint);
-                    startService(new Intent(getApplicationContext(), Services.class));
+                    startService(new Intent(getApplicationContext(), EcoVolumeServices.class));
+                }
+            }
+        };
+
+        noiseBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // TODO Auto-generated method stub
+
+                if(NoiseSvcRunning == true) {
+                    NoiseSvcRunning = false;
+                    refreshNoiseNotification(RedPoint);
+                    stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
+                }
+                else {
+                    NoiseSvcRunning = true;
+                    refreshNoiseNotification(GreenPoint);
+                    startService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
                 }
             }
         };
@@ -123,7 +145,8 @@ public class NotificationServices extends Service implements Runnable {
                 // TODO Auto-generated method stub
                 NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                stopService(new Intent(getApplicationContext(), Services.class));
+                stopService(new Intent(getApplicationContext(), EcoVolumeServices.class));
+                stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
                 stopService(new Intent(getApplicationContext(), NotificationServices.class));
 
                 Toast.makeText(getApplicationContext(),"에코볼륨 서비스가 종료됩니다!", Toast.LENGTH_LONG).show();
@@ -134,10 +157,14 @@ public class NotificationServices extends Service implements Runnable {
         IntentFilter ecoFilter = new IntentFilter();
         ecoFilter.addAction("notiEcoButton");
 
+        IntentFilter noiseFilter = new IntentFilter();
+        noiseFilter.addAction("notiNoiseButton");
+
         IntentFilter cancelFilter = new IntentFilter();
         cancelFilter.addAction("notiCancel");
 
         registerReceiver(ecoBroadcastReceiver, ecoFilter);
+        registerReceiver(noiseBroadcastReceiver, noiseFilter);
         registerReceiver(cancelBroadcastReceiver, cancelFilter);
 
         noti.contentView = contentiew;
@@ -152,6 +179,7 @@ public class NotificationServices extends Service implements Runnable {
         Log.w("ServiceLog", "Notification Service Destroyed");
 
         unregisterReceiver(ecoBroadcastReceiver);
+        unregisterReceiver(noiseBroadcastReceiver);
         unregisterReceiver(cancelBroadcastReceiver);
         notiStarted = false;
         super.onDestroy();
@@ -194,26 +222,92 @@ public class NotificationServices extends Service implements Runnable {
         PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent noiseIntent = new Intent("notiNoiseButton");
+        PendingIntent noisePendingIntent = PendingIntent.getBroadcast(this, 0, noiseIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent cancelIntent = new Intent("notiCancel");
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final RemoteViews contentiew = new RemoteViews(getPackageName(), R.layout.remote_view);
         contentiew.setOnClickPendingIntent(R.id.notiEcoButton, ecoPendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiNoiseButton, noisePendingIntent);
         contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
 
         contentiew.setImageViewBitmap(R.id.notiEcoImage, bitmap);
 
+        if(NoiseSvcRunning)
+            contentiew.setImageViewBitmap(R.id.notiNoiseImage, GreenPoint);
+        else
+            contentiew.setImageViewBitmap(R.id.notiNoiseImage, RedPoint);
+
         IntentFilter ecoFilter = new IntentFilter();
         ecoFilter.addAction("notiEcoButton");
+
+        IntentFilter noiseFilter = new IntentFilter();
+        noiseFilter.addAction("notiNoiseButton");
 
         IntentFilter cancelFilter = new IntentFilter();
         cancelFilter.addAction("notiCancel");
 
         unregisterReceiver(ecoBroadcastReceiver);
+        unregisterReceiver(noiseBroadcastReceiver);
         unregisterReceiver(cancelBroadcastReceiver);
 
         registerReceiver(ecoBroadcastReceiver, ecoFilter);
+        registerReceiver(noiseBroadcastReceiver, noiseFilter);
+        registerReceiver(cancelBroadcastReceiver, cancelFilter);
+
+        noti.contentView = contentiew;
+        nm.notify(2, noti);
+    }
+
+    private void refreshNoiseNotification(Bitmap bitmap) {
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancel(2);
+
+        Notification noti = builder.build();
+
+        Intent ecoIntent = new Intent("notiEcoButton");
+        PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent noiseIntent = new Intent("notiNoiseButton");
+        PendingIntent noisePendingIntent = PendingIntent.getBroadcast(this, 0, noiseIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent cancelIntent = new Intent("notiCancel");
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final RemoteViews contentiew = new RemoteViews(getPackageName(), R.layout.remote_view);
+        contentiew.setOnClickPendingIntent(R.id.notiEcoButton, ecoPendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiNoiseButton, noisePendingIntent);
+        contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
+
+        contentiew.setImageViewBitmap(R.id.notiNoiseImage, bitmap);
+
+        if(EcoSvcRunning)
+            contentiew.setImageViewBitmap(R.id.notiEcoImage, GreenPoint);
+        else
+            contentiew.setImageViewBitmap(R.id.notiEcoImage, RedPoint);
+
+        IntentFilter ecoFilter = new IntentFilter();
+        ecoFilter.addAction("notiEcoButton");
+
+        IntentFilter noiseFilter = new IntentFilter();
+        noiseFilter.addAction("notiNoiseButton");
+
+        IntentFilter cancelFilter = new IntentFilter();
+        cancelFilter.addAction("notiCancel");
+
+        unregisterReceiver(ecoBroadcastReceiver);
+        unregisterReceiver(noiseBroadcastReceiver);
+        unregisterReceiver(cancelBroadcastReceiver);
+
+        registerReceiver(ecoBroadcastReceiver, ecoFilter);
+        registerReceiver(noiseBroadcastReceiver, noiseFilter);
         registerReceiver(cancelBroadcastReceiver, cancelFilter);
 
         noti.contentView = contentiew;

@@ -163,9 +163,9 @@ public class SlidingTabsBasicFragment extends Fragment {
 					});
 
 					// Service 실행 여부 판단
-					boolean svcRunning = isServiceRunning("com.android.inputsound.Services");
-					Log.w("svc Check", "" + svcRunning);
-					if(svcRunning) {
+					boolean EcosvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
+					Log.w("svc Check", "" + EcosvcRunning);
+					if(EcosvcRunning) {
 						ecoSwitch.setChecked(true);
 						EcoButton.setText("에코볼륨\n중단하기");
 						SaveUserSetting.setEcoVolumeStarted(true);
@@ -173,6 +173,18 @@ public class SlidingTabsBasicFragment extends Fragment {
 					else {
 						EcoButton.setText("에코볼륨\n시작하기");
 						SaveUserSetting.setEcoVolumeStarted(false);
+					}
+
+					boolean NCsvcRunning = isServiceRunning("com.android.inputsound.NoiseCancelingServices");
+					Log.w("svc Check", "" + NCsvcRunning);
+					if(NCsvcRunning) {
+						noiseSwitch.setChecked(true);
+						NoiseButton.setText("노이즈캔슬링\n중단하기");
+						SaveUserSetting.setNoiseCancelStarted(true);
+					}
+					else {
+						NoiseButton.setText("노이즈캔슬링\n시작하기");
+						SaveUserSetting.setNoiseCancelStarted(false);
 					}
 					container.addView(homeView);
 
@@ -281,11 +293,6 @@ public class SlidingTabsBasicFragment extends Fragment {
 							return false;
 						}
 					});
-
-					final LinearLayout upperAlertLay, highNoiseAlertLay, listenTimeAlertLay;
-					upperAlertLay = (LinearLayout)settingView.findViewById(R.id.upperAlertLay);
-					highNoiseAlertLay = (LinearLayout)settingView.findViewById(R.id.highNoiseAlertLay);
-					listenTimeAlertLay = (LinearLayout)settingView.findViewById(R.id.listenTimeAlertLay);
 
 					final com.gc.materialdesign.views.CheckBox upperAlert, highNoiseAlert, listenTimeAlert;
 					upperAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.upperAlert);
@@ -430,17 +437,12 @@ public class SlidingTabsBasicFragment extends Fragment {
 			AudioRecord audioRecord = new AudioRecord(
 					MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
 
-			int maxJitter = AudioTrack.getMinBufferSize(frequency, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-
-			//////// 소리 출력 부분 ////////
-			AudioTrack audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, 8000, AudioFormat.CHANNEL_OUT_MONO,
-					audioEncoding, maxJitter, AudioTrack.MODE_STREAM);
-
 			short[] buffer = new short[blockSize];
-			audioRecord.startRecording();
+			//audioRecord.startRecording();
 
-			//////// 소리 출력 부분 ////////
-			audioTrack.play();
+			//////////////////////////////////
+			SaveDCB.setAudioRecord(audioRecord);
+			//////////////////////////////////
 
 			while(true) {
 				//////////////////////////////////// Input dB Calculate ////////////////////////////////////
@@ -449,12 +451,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 				// double로 이뤄진 배열인 toTransform은 같은 데이터를 담지만 double 타입인데, FFT 클래스에서는 double타입이 필요해서이다.
 
 				//short[] buffer = new short[blockSize];
-				//audioRecord.startRecording();
-
-				int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
-
-				//////// 소리 출력 부분 ////////
-				audioTrack.write(buffer, 0, bufferReadResult);
+				audioRecord.startRecording();
+				audioRecord.read(buffer, 0, blockSize);
 
 				final int result = calculatePowerDb(buffer, 0, blockSize) + 90;
 
@@ -491,6 +489,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 						outdBValue.setText((int) SPL + " dB");
 					}
 				});
+
+				audioRecord.stop();
 
 				try {
 					Thread.sleep(1000);

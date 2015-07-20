@@ -16,9 +16,16 @@
             </intent-filter>
         </activity>
 
-        <service android:name="Services">
+        <service android:name="EcoVolumeServices">
             <intent-filter>
-                <action android:name="com.android.inputsound.services"/>
+                <action android:name="com.android.inputsound.ecovolumeservices"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".NoiseCancelingServices">
+            <intent-filter>
+                <action android:name="com.android.inputsound.noisecancelingservices"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>

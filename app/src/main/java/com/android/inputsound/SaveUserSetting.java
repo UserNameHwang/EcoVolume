@@ -41,4 +41,13 @@ public class SaveUserSetting {
         EcoVolumeStarted = ecoVolumeStarted;
     }
     private static boolean EcoVolumeStarted;
+
+    public static boolean isNoiseCancelStarted() {
+        return NoiseCancelStarted;
+    }
+
+    public static void setNoiseCancelStarted(boolean noiseCancelStarted) {
+        NoiseCancelStarted = noiseCancelStarted;
+    }
+    private static boolean NoiseCancelStarted;
 }
