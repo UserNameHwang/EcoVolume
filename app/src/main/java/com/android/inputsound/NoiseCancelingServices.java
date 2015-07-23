@@ -23,6 +23,15 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
     private Thread cancelingThread;
 
+    private short[][] noisePattern;
+    private int numPattern;
+    private boolean finPattern;
+
+    private int frequency = 8000;
+    private int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    private int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    private int blockSize = 256;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -39,6 +48,12 @@ public class NoiseCancelingServices extends Service implements Runnable {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("ServiceLog", "CancelingService Started");
+
+        //패턴초기화
+        numPattern = 0;
+        noisePattern = new short[50][blockSize];
+        finPattern = false;
+
 
         cancelingStarted = true;
         if(cancelingThread.getState().toString().equals("TERMINATED")){
@@ -59,11 +74,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
         super.onDestroy();
     }
 
-    int frequency = 8000;
-    int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
 
-    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-    int blockSize = 256;
 
     @Override
     public void run() {
@@ -86,13 +97,57 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
         audioTrack.play();
         while (cancelingStarted) {
-                audioRecord.startRecording();
-                int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
+            audioRecord.startRecording();
+            int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
 
-                audioTrack.write(buffer, 0, bufferReadResult);
+            //50개의 연속적인 short 배열을 저장한다
+            noisePattern[numPattern] = buffer;
+
+            //50개의 배열이 완성되면 패턴을 분석한다
+            if(finPattern)
+                analysisPattern();
+
+            audioTrack.write(noisePattern[numPattern], 0, bufferReadResult);
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //패턴입력 처음으로 초기화
+            if(numPattern==49) {
+                numPattern = 0;
+                finPattern = true;
+            }
+            else
+                numPattern++;
+
         }
 
         audioTrack.stop();
         audioRecord.stop();
+    }
+
+
+    //패턴 분석 함수
+    public void analysisPattern()
+    {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
