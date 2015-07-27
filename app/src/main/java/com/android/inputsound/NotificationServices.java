@@ -69,6 +69,8 @@ public class NotificationServices extends Service implements Runnable {
 
         Notification noti = builder.build();
 
+        noti.flags |= Notification.FLAG_NO_CLEAR;
+
         Intent ecoIntent = new Intent("notiEcoButton");
         PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -169,7 +171,6 @@ public class NotificationServices extends Service implements Runnable {
 
         noti.contentView = contentiew;
         nm.notify(2, noti);
-        //noti.flags |= Notification.FLAG_NO_CLEAR;
 
         return START_REDELIVER_INTENT;
     }
@@ -217,6 +218,8 @@ public class NotificationServices extends Service implements Runnable {
         nm.cancel(2);
 
         Notification noti = builder.build();
+
+        noti.flags |= Notification.FLAG_NO_CLEAR;
 
         Intent ecoIntent = new Intent("notiEcoButton");
         PendingIntent ecoPendingIntent = PendingIntent.getBroadcast(this, 0, ecoIntent,
