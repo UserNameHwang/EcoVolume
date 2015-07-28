@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">EcoVolume</string>
 
-    <string name="highAlarm">고위험 소음 알림</string>
+    <string name="highAlarm">높은 음량 청취 알림</string>
     <string name="timeAlarm">적정 청취시간 알림</string>
 
     <string name="hello_world">Hello world!</string>
