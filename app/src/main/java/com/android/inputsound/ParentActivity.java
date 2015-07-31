@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -220,6 +221,17 @@ public class ParentActivity extends AppCompatActivity {
 		getMenuInflater().inflate(R.menu.menu_main, menu);
 
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getTitle().equals("Information")){
+			Intent infoIntent = new Intent(ParentActivity.this, InfoActivity.class);
+			startActivity(infoIntent);
+			Toast toto = Toast.makeText(this, "Information이 선택되었습니다",Toast.LENGTH_SHORT);
+			toto.show();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
