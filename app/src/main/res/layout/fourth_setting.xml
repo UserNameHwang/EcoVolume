@@ -199,23 +199,6 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.gc.materialdesign.views.Slider
-                    android:id="@+id/lowLimit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#1E88E5"
-                    materialdesign:max="100"
-                    materialdesign:min="75"
-                    materialdesign:showNumberIndicator="true" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -228,6 +211,23 @@
                     android:textColor="#FF000000"
                     android:id="@+id/DCBtext"/>
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.gc.materialdesign.views.Slider
+                android:id="@+id/lowLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#1E88E5"
+                materialdesign:max="100"
+                materialdesign:min="75"
+                materialdesign:showNumberIndicator="true" />
         </LinearLayout>
 
         <LinearLayout

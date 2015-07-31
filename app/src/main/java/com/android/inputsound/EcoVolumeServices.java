@@ -2,22 +2,16 @@ package com.android.inputsound;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-/**
- * Created by Administrator on 2015-06-21.
- */
 public class EcoVolumeServices extends Service implements Runnable {
 
     private boolean ecoStarted = false;
@@ -29,7 +23,6 @@ public class EcoVolumeServices extends Service implements Runnable {
     private double SPL= 75;
 
     private NotificationCompat.Builder builder;
-    private int AlertDecibel;
 
     @Nullable
     @Override
@@ -70,14 +63,6 @@ public class EcoVolumeServices extends Service implements Runnable {
         super.onDestroy();
     }
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-        NotificationManager manager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        manager.notify(1, builder.build());
-    };
-};
     @Override
     public void run() {
         // Sample Smartphone 볼륨 당 음압전류

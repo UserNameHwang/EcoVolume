@@ -11,6 +11,7 @@ import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -277,6 +278,14 @@ public class SlidingTabsBasicFragment extends Fragment {
 						@Override
 						public void onValueChanged(int i) {
 							SaveUserSetting.SetLimitDcb((double) (seekbar.getValue()));
+
+							SharedPreferences sp =
+									getActivity().getApplicationContext().getSharedPreferences("pref", getActivity().getApplicationContext().MODE_PRIVATE);
+							SharedPreferences.Editor editor = sp.edit();
+
+							editor.putInt("MIN_DCB", i);
+							editor.apply();
+
 							TextView settingDCB = (TextView) settingView.findViewById(R.id.DCBtext);
 
 							settingDCB.setText(seekbar.getValue() + "dB");
