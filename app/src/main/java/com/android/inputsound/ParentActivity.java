@@ -9,10 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -21,11 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.inputsound.FFT.RealDoubleFFT;
 import com.gc.materialdesign.views.ButtonRectangle;
 
 import java.util.List;
@@ -94,6 +87,9 @@ public class ParentActivity extends AppCompatActivity {
 
 		SaveUserSetting.SetLimitDcb((double) sp.getInt("MIN_DCB", 75));
 
+		// Alert 기능 실행
+		VolumeAlertThread vat = new VolumeAlertThread(this);
+		vat.start();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -154,7 +150,7 @@ public class ParentActivity extends AppCompatActivity {
 			stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
 		}else{
 			NCstarted = true;
-			SaveUserSetting.setNoiseAlertStarted(true);
+			SaveUserSetting.setNoiseCancelStarted(true);
 			noiseSwitch.setChecked(true);
 			NoiseButton.setText("노이즈캔슬링\n중단하기");
 			startService(new Intent(getApplicationContext(), NoiseCancelingServices.class));

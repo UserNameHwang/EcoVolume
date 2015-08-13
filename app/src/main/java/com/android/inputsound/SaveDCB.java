@@ -40,5 +40,15 @@ public class SaveDCB {
 
     private static int[] inDCB = new int[5];
     private static int[] outDCB = new int[5];
+
+    public static double getSPL() {
+        return SPL;
+    }
+
+    public static void setSPL(double SPL) {
+        SaveDCB.SPL = SPL;
+    }
+
+    private static double SPL;
     private static AudioRecord audioRecord;
 }

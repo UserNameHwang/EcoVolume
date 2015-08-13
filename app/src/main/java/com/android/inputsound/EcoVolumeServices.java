@@ -18,9 +18,9 @@ public class EcoVolumeServices extends Service implements Runnable {
     private boolean VolumeAlertStarted = false;
 
     private Thread ecoThread;
-    private VolumeAlertThread va;
+    //private VolumeAlertThread va;
     private double MIN_DECIBEL = 75;
-    private double SPL= 75;
+    private double SPL = 75;
 
     private NotificationCompat.Builder builder;
 
@@ -33,10 +33,10 @@ public class EcoVolumeServices extends Service implements Runnable {
     @Override
     public void onCreate() {
         ecoThread = new Thread(this);
-        va = new VolumeAlertThread(this);
+        //va = new VolumeAlertThread(this);
 
         ecoThread.start();
-        va.start();
+        //va.start();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class EcoVolumeServices extends Service implements Runnable {
         Log.w("ServiceLog", "EcoService Started");
 
         ecoStarted = true;
-        if(ecoThread.getState().toString().equals("TERMINATED")){
+        if (ecoThread.getState().toString().equals("TERMINATED")) {
             ecoThread = new Thread(this);
 
             ecoThread.start();
@@ -96,21 +96,18 @@ public class EcoVolumeServices extends Service implements Runnable {
                 double MillWatt = Watt / 1000;
                 // 전력에서의 dB 계산식 : dB = 10 * log(임피던스의 전력/현재 볼륨 전력)
                 double dB;
-                if( MillWatt != 0 )
+                if (MillWatt != 0)
                     dB = 10 * Math.log10(OhmofImp / MillWatt);
                 else
                     dB = Sensitivity;
                 // 실제 출력 볼륨 dB : 감도의 데시벨 - 현재 전력의 데시벨
                 SPL = Sensitivity - dB;
 
-                Log.w("Current Decibel", "decibel : " + SPL);
-
                 SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
                 MIN_DECIBEL = sp.getInt("MIN_DCB", 75);
-        //        MIN_DECIBEL = SaveUserSetting.GetLimitDcb();
-                Log.w("Minimum Decibel", "decibel : " + MIN_DECIBEL);
+                //        MIN_DECIBEL = SaveUserSetting.GetLimitDcb();
 
-                if ((int)SPL > MIN_DECIBEL)
+                if ((int) SPL > MIN_DECIBEL)
                     audiomanager.setStreamVolume(audiomanager.STREAM_MUSIC,
                             mCurvol - 1, audiomanager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
@@ -121,6 +118,7 @@ public class EcoVolumeServices extends Service implements Runnable {
         }
     }
 
+    /*
     private class VolumeAlertThread extends Thread {
 
         public VolumeAlertThread(Context c) {
@@ -158,7 +156,7 @@ public class EcoVolumeServices extends Service implements Runnable {
 
             while(true) {
 
-                VolumeAlertStarted = SaveUserSetting.isNoiseAlertStarted();
+                VolumeAlertStarted = SaveUserSetting.isVolumeAlertStarted();
                 if(VolumeAlertStarted == true) {
                     try {
                         if (SPL >= 90) {
@@ -189,4 +187,6 @@ public class EcoVolumeServices extends Service implements Runnable {
             }
         }
     }
+    */
+
 }
