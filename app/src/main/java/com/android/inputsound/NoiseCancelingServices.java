@@ -22,6 +22,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
     private boolean cancelingStarted = false;
 
     private Thread cancelingThread;
+    private TrackWrite tw;
 
     private short[][] noisePattern;
     private short[] finalPattern;
@@ -42,7 +43,6 @@ public class NoiseCancelingServices extends Service implements Runnable {
     @Override
     public void onCreate() {
         cancelingThread = new Thread(this);
-
         cancelingThread.start();
     }
 
@@ -98,26 +98,29 @@ public class NoiseCancelingServices extends Service implements Runnable {
         short[] buffer = new short[blockSize];
 
         audioTrack.play();
+
+        tw = new TrackWrite(audioTrack);
+        tw.start();
+
         while (cancelingStarted) {
             audioRecord.startRecording();
-            int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
 
+            audioRecord.read(buffer, 0, blockSize);
             //50개의 연속적인 short 배열을 저장한다
             noisePattern[numPattern] = buffer;
 
             //50개의 배열이 완성되면 패턴을 분석한다
-            if(finPattern)
+            if(finPattern) {
                 analysisPattern();
+            }
 
-            if(finPattern)
-                audioTrack.write(finalPattern, 0, bufferReadResult);
-
+            /*
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
+            */
             //패턴입력 처음으로 초기화
             if(numPattern==49) {
                 numPattern = 0;
@@ -134,8 +137,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
 
     //패턴 분석 함수
-    public void analysisPattern()
-    {
+    public void analysisPattern() {
         short[] makePattern;
         short[] countPattern;
         int numMakePattern = 1;
@@ -175,13 +177,38 @@ public class NoiseCancelingServices extends Service implements Runnable {
                     mostFreq = k;
                 }
             }
-
             finalPattern[i] = makePattern[mostFreq];
-
-            Log.w("pattern",""+ finalPattern[i]);
         }
 
+        try {
+            tw.setWritePattern(finalPattern);
 
+            Thread.sleep(2000);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
+    private class TrackWrite extends Thread{
+
+        private AudioTrack at;
+        private short writePattern[];
+
+        public TrackWrite(AudioTrack at){
+            this.at = at;
+            writePattern = new short[256];
+        }
+
+        public void setWritePattern(short[] inPattern){
+            writePattern = inPattern;
+        }
+
+        @Override
+        public void run() {
+
+            while(cancelingStarted) {
+                at.write(writePattern, 0, blockSize);
+            }
+        }
     }
 }
