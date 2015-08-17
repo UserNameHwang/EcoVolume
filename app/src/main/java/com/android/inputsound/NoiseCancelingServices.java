@@ -24,6 +24,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
     private Thread cancelingThread;
 
     private short[][] noisePattern;
+    private short[] finalPattern;
     private int numPattern;
     private boolean finPattern;
 
@@ -52,6 +53,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
         //패턴초기화
         numPattern = 0;
         noisePattern = new short[50][blockSize];
+        finalPattern = new short[blockSize];
         finPattern = false;
 
 
@@ -107,7 +109,8 @@ public class NoiseCancelingServices extends Service implements Runnable {
             if(finPattern)
                 analysisPattern();
 
-            audioTrack.write(noisePattern[numPattern], 0, bufferReadResult);
+            if(finPattern)
+                audioTrack.write(finalPattern, 0, bufferReadResult);
 
             try {
                 Thread.sleep(50);
@@ -133,19 +136,50 @@ public class NoiseCancelingServices extends Service implements Runnable {
     //패턴 분석 함수
     public void analysisPattern()
     {
+        short[] makePattern;
+        short[] countPattern;
+        int numMakePattern = 1;
+        short temp;
+        boolean findPattern;
+        int mostFreq = 0;
 
 
+        for(int i = 0; i < 256; i++) {
+
+            makePattern = new short[50];
+            countPattern = new short[50];
+            makePattern[0] = noisePattern[0][i];
 
 
+            for (int j = 0; j < 50; j++) {
 
+                findPattern = true;
 
+                for(int k = 0; k < numMakePattern; k++) {
+                    temp = (short)Math.abs(makePattern[k] - noisePattern[j][i]);
+                    if(temp < 100) {
+                        makePattern[k] = (short)((makePattern[k] + noisePattern[j][i])/2);
+                        countPattern[k]++;
+                        findPattern = false;
+                    }
+                }
 
+                if(findPattern) {
+                    makePattern[numMakePattern++] = noisePattern[j][i];
+                }
 
+            }
 
+            for(int k = 0; k < numMakePattern; k++) {
+                if(countPattern[k] > countPattern[mostFreq]) {
+                    mostFreq = k;
+                }
+            }
 
+            finalPattern[i] = makePattern[mostFreq];
 
-
-
+            Log.w("pattern",""+ finalPattern[i]);
+        }
 
 
 
