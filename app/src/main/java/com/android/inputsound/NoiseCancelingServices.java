@@ -145,7 +145,6 @@ public class NoiseCancelingServices extends Service implements Runnable {
         boolean findPattern;
         int mostFreq = 0;
 
-
         for(int i = 0; i < 256; i++) {
 
             makePattern = new short[50];
@@ -181,6 +180,9 @@ public class NoiseCancelingServices extends Service implements Runnable {
         }
 
         try {
+            for(int i=0; i<256; i++)
+                Log.w("itooitoiuy", i+","+finalPattern[i]);
+
             tw.setWritePattern(finalPattern);
 
             Thread.sleep(2000);
@@ -201,6 +203,9 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
         public void setWritePattern(short[] inPattern){
             writePattern = inPattern;
+
+            for(int i=0; i<256; i++)
+                Log.w("asdasdasd", i+","+writePattern[i]);
         }
 
         @Override
