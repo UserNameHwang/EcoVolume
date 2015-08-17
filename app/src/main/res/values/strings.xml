@@ -5,5 +5,13 @@
     <string name="timeAlarm">적정 청취시간 알림</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Information</string>
+
+    <string name="noiseInfo">노이즈 캔슬링이란 주변 소음의 파장을 파악하여 반대 파형을 생성한 뒤
+        기존 출력 음성신호에 합병하여 결과적으로 사용자는 소음이 제거된 소리를 듣게 된다.
+        소음이 제거 되었기 때문에 사용자는 좀 더 좋은 품질의 음악을 감상할 수 있게된다.</string>
+    <string name="ecoInfo">현대 사회에서 이어폰의 사용이 급격하게 증가함에 따라 소음성 난청을
+        호소하는 사람이 늘어나게 되었다. 따라서 소음성 난청을 예방하고자 고위험 음량으로 듣게 될경우
+        사용자의 설정 혹은 지정된 소리의 크기로 낮춰주어 사용자가 고위험 음량에 오랜시간 노출되지
+        않게 한다.</string>
 </resources>

@@ -31,6 +31,7 @@ public class NotificationServices extends Service implements Runnable {
     private boolean NoiseSvcRunning;
 
     private Thread noitThread;
+    private VolumeAlertThread vat;
 
     private Notification.Builder builder;
     private BroadcastReceiver ecoBroadcastReceiver;
@@ -49,6 +50,10 @@ public class NotificationServices extends Service implements Runnable {
         builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setTicker("에코볼륨이 실행중입니다.");
+
+        //Alert 기능 실행
+        vat = new VolumeAlertThread(this);
+        vat.start();
     }
 
     @Override

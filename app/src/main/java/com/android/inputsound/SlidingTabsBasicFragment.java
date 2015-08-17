@@ -2,7 +2,6 @@ package com.android.inputsound;
 
 import com.android.view.LineGraphSetting;
 import com.android.view.SlidingTabLayout;
-import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.gc.materialdesign.views.CheckBox;
 import com.gc.materialdesign.views.Slider;
@@ -11,11 +10,11 @@ import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
-import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,12 +27,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -277,6 +272,14 @@ public class SlidingTabsBasicFragment extends Fragment {
 						@Override
 						public void onValueChanged(int i) {
 							SaveUserSetting.SetLimitDcb((double) (seekbar.getValue()));
+
+							SharedPreferences sp =
+									getActivity().getApplicationContext().getSharedPreferences("pref", getActivity().getApplicationContext().MODE_PRIVATE);
+							SharedPreferences.Editor editor = sp.edit();
+
+							editor.putInt("MIN_DCB", i);
+							editor.apply();
+
 							TextView settingDCB = (TextView) settingView.findViewById(R.id.DCBtext);
 
 							settingDCB.setText(seekbar.getValue() + "dB");
@@ -294,17 +297,22 @@ public class SlidingTabsBasicFragment extends Fragment {
 						}
 					});
 
-					final com.gc.materialdesign.views.CheckBox upperAlert, highNoiseAlert, listenTimeAlert;
+					final com.gc.materialdesign.views.CheckBox upperAlert, highVolumeAlert, listenTimeAlert;
 					upperAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.upperAlert);
-					highNoiseAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.highNoiseAlert);
+					highVolumeAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.highNoiseAlert);
 					listenTimeAlert = (com.gc.materialdesign.views.CheckBox)settingView.findViewById(R.id.listenTimeAlert);
 
-					highNoiseAlert.setOncheckListener(new CheckBox.OnCheckListener() {
+					final SharedPreferences sp =
+							getActivity().getApplicationContext().getSharedPreferences("pref", getActivity().getApplicationContext().MODE_PRIVATE);
+
+					highVolumeAlert.setOncheckListener(new CheckBox.OnCheckListener() {
 						@Override
 						public void onCheck(boolean b) {
-							SaveUserSetting.setNoiseAlertStarted(b);
-							if(SaveUserSetting.isEcoVolumeStarted() == false && b == true)
-								Toast.makeText(getActivity().getApplicationContext(), "에코볼륨이 시작되지 않아 알림이 나타나지 않습니다.", Toast.LENGTH_LONG).show();
+
+							SharedPreferences.Editor editor = sp.edit();
+
+							editor.putBoolean("VolumeAlert", b);
+							editor.apply();
 
 						}
 					});
@@ -322,13 +330,16 @@ public class SlidingTabsBasicFragment extends Fragment {
 						public void onCheck(boolean b) {
 							if(b == false){
 								upperAlert.setChecked(false);
-								highNoiseAlert.setChecked(false);
+								highVolumeAlert.setChecked(false);
 								listenTimeAlert.setChecked(false);
 
-								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+								highVolumeAlert.setOnTouchListener(new View.OnTouchListener() {
 									@Override
 									public boolean onTouch(View v, MotionEvent event) {
-										SaveUserSetting.setNoiseAlertStarted(false);
+										SharedPreferences.Editor editor = sp.edit();
+
+										editor.putBoolean("VolumeAlert", false);
+										editor.apply();
 										return true;
 									}
 								});
@@ -344,7 +355,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 							else{
 								upperAlert.setChecked(true);
 
-								highNoiseAlert.setOnTouchListener(new View.OnTouchListener() {
+								highVolumeAlert.setOnTouchListener(new View.OnTouchListener() {
 									@Override
 									public boolean onTouch(View v, MotionEvent event) {
 										return false;
@@ -360,6 +371,13 @@ public class SlidingTabsBasicFragment extends Fragment {
 							}
 						}
 					});
+
+					boolean VolumeAlert = sp.getBoolean("VolumeAlert", false);
+
+					if(VolumeAlert)
+						highVolumeAlert.setChecked(true);
+					else
+						highVolumeAlert.setChecked(false);
 
 					container.addView(settingView);
 					LastCheck++;
@@ -478,8 +496,9 @@ public class SlidingTabsBasicFragment extends Fragment {
 					dB = Sensitivity;
 				// 실제 출력 볼륨 dB : 감도의 데시벨 - 현재 전력의 데시벨
 				final double SPL = Sensitivity - dB;
+				SaveDCB.setSPL(SPL);
 
-			//	Log.w("Now Decibel", "output decibel : " + (int) SPL);
+				//	Log.w("Now Decibel", "output decibel : " + (int) SPL);
 				outDCB = (int) SPL;
 
 				getActivity().runOnUiThread(new Runnable() {

@@ -15,15 +15,6 @@ public class SaveUserSetting {
     }
     private static double LimitDcb;
 
-    public static boolean isNoiseAlertStarted() {
-        return NoiseAlertStarted;
-    }
-
-    public static void setNoiseAlertStarted(boolean volumeAlertStarted) {
-        NoiseAlertStarted = volumeAlertStarted;
-    }
-    private static boolean NoiseAlertStarted;
-
     public static boolean isTimeAlertStarted() {
         return TimeAlertStarted;
     }
