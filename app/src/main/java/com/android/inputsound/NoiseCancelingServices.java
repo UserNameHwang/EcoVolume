@@ -114,13 +114,15 @@ public class NoiseCancelingServices extends Service implements Runnable {
                 analysisPattern();
             }
 
-            /*
+/*
             try {
-                Thread.sleep(50);
+                tw.setWritePattern(finalPattern);
+
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            */
+*/
             //패턴입력 처음으로 초기화
             if(numPattern==49) {
                 numPattern = 0;
@@ -158,7 +160,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
                 for(int k = 0; k < numMakePattern; k++) {
                     temp = (short)Math.abs(makePattern[k] - noisePattern[j][i]);
-                    if(temp < 100) {
+                    if(temp < 50) {
                         makePattern[k] = (short)((makePattern[k] + noisePattern[j][i])/2);
                         countPattern[k]++;
                         findPattern = false;
@@ -176,19 +178,19 @@ public class NoiseCancelingServices extends Service implements Runnable {
                     mostFreq = k;
                 }
             }
-            finalPattern[i] = makePattern[mostFreq];
+
+//            finalPattern[i] = makePattern[mostFreq];
+            finalPattern[255-i] = makePattern[mostFreq];
         }
 
         try {
-            for(int i=0; i<256; i++)
-                Log.w("itooitoiuy", i+","+finalPattern[i]);
-
             tw.setWritePattern(finalPattern);
 
-            Thread.sleep(2000);
+            Thread.sleep(1500);
         } catch (Exception e){
             e.printStackTrace();
         }
+
     }
 
     private class TrackWrite extends Thread{
@@ -203,9 +205,6 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
         public void setWritePattern(short[] inPattern){
             writePattern = inPattern;
-
-            for(int i=0; i<256; i++)
-                Log.w("asdasdasd", i+","+writePattern[i]);
         }
 
         @Override
