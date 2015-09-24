@@ -100,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#FFFFFE"
-                android:text="노이즈캔슬링&#10;시작하기"
+                android:text="@string/startNC"
                 android:textSize="20sp"
                 android:onClick="onNoiseCancel" />
         </LinearLayout>
@@ -124,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#FFFFFE"
-                android:text="에코볼륨&#10;시작하기"
+                android:text="@string/startEC"
                 android:textSize="20sp"
                 android:onClick="onEcoVolume"
                 />

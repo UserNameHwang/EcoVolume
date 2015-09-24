@@ -1,20 +1,17 @@
 package com.android.inputsound;
 
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import com.android.inputsound.FFT.RealDoubleFFT;
 
 
 public class NoiseCancelingServices extends Service implements Runnable {
@@ -23,7 +20,7 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
     private Thread cancelingThread;
     private TrackWrite tw;
-
+    private AudioTrack audioTrack;
     private short[][] noisePattern;
     private short[] finalPattern;
     private int numPattern;
@@ -32,7 +29,17 @@ public class NoiseCancelingServices extends Service implements Runnable {
     private int frequency = 8000;
     private int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     private int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+
+    private int patternSize = 50;
     private int blockSize = 256;
+
+    private final int duration = 5;
+    private final int sampleRate = 8000;
+    private final int numSamples = duration * sampleRate;
+    private final double sample[] = new double[numSamples];
+    private double freqOfTone;
+
+    private final byte generatedSnd[] = new byte[2 * numSamples];
 
     @Nullable
     @Override
@@ -42,6 +49,10 @@ public class NoiseCancelingServices extends Service implements Runnable {
 
     @Override
     public void onCreate() {
+        audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 8000, AudioFormat.CHANNEL_OUT_MONO,
+                audioEncoding, 8000, AudioTrack.MODE_STREAM);
+        audioTrack.play();
+
         cancelingThread = new Thread(this);
         cancelingThread.start();
     }
@@ -50,9 +61,9 @@ public class NoiseCancelingServices extends Service implements Runnable {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("ServiceLog", "CancelingService Started");
 
-        //Ìå®ÌÑ¥Ï¥àÍ∏∞Ìôî
+        //∆–≈œ√ ±‚»≠
         numPattern = 0;
-        noisePattern = new short[50][blockSize];
+        noisePattern = new short[patternSize][blockSize];
         finalPattern = new short[blockSize];
         finPattern = false;
 
@@ -76,143 +87,139 @@ public class NoiseCancelingServices extends Service implements Runnable {
         super.onDestroy();
     }
 
-
-
     @Override
     public void run() {
-
-        int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
 
         AudioRecord audioRecord;
         if(SaveDCB.getAudioRecord() == null)
             audioRecord = new AudioRecord(
-                    MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
+                    MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, 8000);
         else
              audioRecord = SaveDCB.getAudioRecord();
 
-        int maxJitter = AudioTrack.getMinBufferSize(frequency, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-
-        AudioTrack audioTrack = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, 8000, AudioFormat.CHANNEL_OUT_MONO,
-                audioEncoding, maxJitter, AudioTrack.MODE_STREAM);
-
-        short[] buffer = new short[blockSize];
-
-        audioTrack.play();
-
-        tw = new TrackWrite(audioTrack);
-        tw.start();
-
+        audioRecord.startRecording();
         while (cancelingStarted) {
             audioRecord.startRecording();
 
-            audioRecord.read(buffer, 0, blockSize);
-            //50Í∞úÏùò Ïó∞ÏÜçÏ†ÅÏù∏ short Î∞∞Ïó¥ÏùÑ Ï†ÄÏû•ÌïúÎã§
-            noisePattern[numPattern] = buffer;
+            if(numPattern < patternSize) {
+                short[] buffer = new short[blockSize];
+                buffer = new short[blockSize];
 
-            //50Í∞úÏùò Î∞∞Ïó¥Ïù¥ ÏôÑÏÑ±ÎêòÎ©¥ Ìå®ÌÑ¥ÏùÑ Î∂ÑÏÑùÌïúÎã§
-            if(finPattern) {
-                analysisPattern();
-            }
+                audioRecord.read(buffer, 0, blockSize);
 
-/*
-            try {
-                tw.setWritePattern(finalPattern);
+                //50∞≥¿« ø¨º”¿˚¿Œ short πËø≠¿ª ¿˙¿Â«—¥Ÿ
+                noisePattern[numPattern] = buffer;
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-*/
-            //Ìå®ÌÑ¥ÏûÖÎ†• Ï≤òÏùåÏúºÎ°ú Ï¥àÍ∏∞Ìôî
-            if(numPattern==49) {
-                numPattern = 0;
-                finPattern = true;
-            }
-            else
                 numPattern++;
 
+                if( numPattern == patternSize ){
+                    analysisPattern(noisePattern);
+                    numPattern = 0;
+                }
+            }
         }
 
-        audioTrack.stop();
         audioRecord.stop();
     }
 
+    //∆–≈œ ∫–ºÆ «‘ºˆ
+    public void analysisPattern(short[][] inPattern) {
+        RealDoubleFFT transformer = new RealDoubleFFT(blockSize);
+        double[][] toTransform = new double[patternSize][blockSize];
+        int[] countPattern = new int[blockSize];
+        short[] NumPattern = new short[blockSize];
 
-    //Ìå®ÌÑ¥ Î∂ÑÏÑù Ìï®Ïàò
-    public void analysisPattern() {
-        short[] makePattern;
-        short[] countPattern;
-        int numMakePattern = 1;
-        short temp;
-        boolean findPattern;
-        int mostFreq = 0;
-
-        for(int i = 0; i < 256; i++) {
-
-            makePattern = new short[50];
-            countPattern = new short[50];
-            makePattern[0] = noisePattern[0][i];
-
-
-            for (int j = 0; j < 50; j++) {
-
-                findPattern = true;
-
-                for(int k = 0; k < numMakePattern; k++) {
-                    temp = (short)Math.abs(makePattern[k] - noisePattern[j][i]);
-                    if(temp < 50) {
-                        makePattern[k] = (short)((makePattern[k] + noisePattern[j][i])/2);
-                        countPattern[k]++;
-                        findPattern = false;
-                    }
-                }
-
-                if(findPattern) {
-                    makePattern[numMakePattern++] = noisePattern[j][i];
-                }
-
+        for(int i=0; i<patternSize; i++ ) {
+            for (int j=0; j<blockSize; j++) {
+                toTransform[i][j] = (double) inPattern[i][j] / Short.MAX_VALUE;
             }
-
-            for(int k = 0; k < numMakePattern; k++) {
-                if(countPattern[k] > countPattern[mostFreq]) {
-                    mostFreq = k;
-                }
-            }
-
-//            finalPattern[i] = makePattern[mostFreq];
-            finalPattern[255-i] = makePattern[mostFreq];
+            transformer.ft(toTransform[i]);
         }
 
-        try {
-            tw.setWritePattern(finalPattern);
+        double maxValue;
+        int maxNum;
+        for(int i=0; i<patternSize; i++) {
+            maxNum = 0;
+            maxValue = 0.0;
+            for(int j=0 ; j<blockSize; j++) {
+                if (toTransform[i][j] > maxValue) {
+                    maxValue = toTransform[i][j];
+                    maxNum = j;
+                }
+            }
+            countPattern[maxNum]++;
+        }
+        countPattern[blockSize-1]=0;
 
-            Thread.sleep(1500);
-        } catch (Exception e){
-            e.printStackTrace();
+        int max, temp;
+        for(int i=0; i<countPattern.length-1; i++) {
+            max = i;
+            for(int j=i+1; j<countPattern.length; j++) {
+                if(countPattern[j] > countPattern[max]) {
+                    max = j;
+                }
+            }
+            temp = countPattern[i];
+            countPattern[i] = countPattern[max];
+            countPattern[max] = temp;
         }
 
+        String log = "";
+        log += numPattern + "-- ";
+        for (int i=0; i<blockSize; i++) {
+            log += i+":"+countPattern[i] + ",,";
+        }
+        Log.w("Analysis Log "+countPattern, log);
+
+        int maxIntValue = 0;
+        maxNum = 0;
+        for(int i=0; i<blockSize; i++) {
+            if(countPattern[i] > maxIntValue) {
+                maxIntValue = countPattern[i];
+                maxNum = i;
+            }
+        }
+
+
+        freqOfTone = 15.625 * maxNum;
+        Log.w("Freq & maxNum", freqOfTone+" Hz, " + maxNum);
+        // fill out the array
+        for (int i = 0; i < numSamples; ++i) {
+            sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
+        }
+
+        // convert to 16 bit pcm sound array
+        // assumes the sample buffer is normalised.
+        int idx = 0;
+        for (final double dVal : sample) {
+            // scale to maximum amplitude / 32
+            final short val = (short) ((dVal * 32767 / 32));
+            // in 16 bit wav PCM, first byte is the low order byte
+            generatedSnd[idx++] = (byte) (val & 0x00ff);
+            generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
+        }
+
+//        for(int q = 0; q < 2000; q++)
+//        {
+//            Log.w("qqqq" + q, "" + generatedSnd[q]);
+//            Log.w("213","`1243");
+//        }
+        tw = new TrackWrite();
+        tw.start();
     }
 
     private class TrackWrite extends Thread{
 
-        private AudioTrack at;
-        private short writePattern[];
-
-        public TrackWrite(AudioTrack at){
-            this.at = at;
-            writePattern = new short[256];
-        }
-
-        public void setWritePattern(short[] inPattern){
-            writePattern = inPattern;
-        }
-
         @Override
         public void run() {
 
-            while(cancelingStarted) {
-                at.write(writePattern, 0, blockSize);
-            }
+            audioTrack.write(generatedSnd, 0, generatedSnd.length);
+
         }
     }
 }

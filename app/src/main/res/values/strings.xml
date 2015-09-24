@@ -7,6 +7,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Information</string>
 
+    <string name="startNC">노이즈캔슬링&#10;시작하기</string>
+
+    <string name="startEC">에코볼륨&#10;시작하기</string>
+
     <string name="noiseInfo">노이즈 캔슬링이란 주변 소음의 파장을 파악하여 반대 파형을 생성한 뒤
         기존 출력 음성신호에 합병하여 결과적으로 사용자는 소음이 제거된 소리를 듣게 된다.
         소음이 제거 되었기 때문에 사용자는 좀 더 좋은 품질의 음악을 감상할 수 있게된다.</string>

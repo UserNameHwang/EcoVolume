@@ -30,15 +30,15 @@ public class MainActivity_back extends AppCompatActivity {
     private static final float FUDGE = 0.6f;
     // AudioReader Variables //
 
-    // AudioRecord ê°ì²´ì—ì„œ ì£¼íŒŒìˆ˜ëŠ” 8kHz, ì˜¤ë””ì˜¤ ì±„ë„ì€ í•˜ë‚˜, ìƒ˜í”Œì€ 16ë¹„íŠ¸ë¥¼ ì‚¬ìš©
+    // AudioRecord °´Ã¼¿¡¼­ ÁÖÆÄ¼ö´Â 8kHz, ¿Àµğ¿À Ã¤³ÎÀº ÇÏ³ª, »ùÇÃÀº 16ºñÆ®¸¦ »ç¿ë
     int frequency = 8000;
     int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
 
     int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
-    // ìš°ë¦¬ì˜ FFT ê°ì²´ëŠ” transformerê³ , ì´ FFT ê°ì²´ë¥¼ í†µí•´ AudioRecord ê°ì²´ì—ì„œ í•œ ë²ˆì— 256ê°€ì§€ ìƒ˜í”Œì„ ë‹¤ë£¬ë‹¤. ì‚¬ìš©í•˜ëŠ” ìƒ˜í”Œì˜ ìˆ˜ëŠ” FFT ê°ì²´ë¥¼ í†µí•´
-    // ìƒ˜í”Œë“¤ì„ ì‹¤í–‰í•˜ê³  ê°€ì ¸ì˜¬ ì£¼íŒŒìˆ˜ì˜ ìˆ˜ì™€ ì¼ì¹˜í•œë‹¤. ë‹¤ë¥¸ í¬ê¸°ë¥¼ ë§ˆìŒëŒ€ë¡œ ì§€ì •í•´ë„ ë˜ì§€ë§Œ, ë©”ëª¨ë¦¬ì™€ ì„±ëŠ¥ ì¸¡ë©´ì„ ë°˜ë“œì‹œ ê³ ë ¤í•´ì•¼ í•œë‹¤.
-    // ì ìš©ë  ìˆ˜í•™ì  ê³„ì‚°ì´ í”„ë¡œì„¸ì„œì˜ ì„±ëŠ¥ê³¼ ë°€ì ‘í•œ ê´€ê³„ë¥¼ ë³´ì´ê¸° ë•Œë¬¸ì´ë‹¤.
+    // ¿ì¸®ÀÇ FFT °´Ã¼´Â transformer°í, ÀÌ FFT °´Ã¼¸¦ ÅëÇØ AudioRecord °´Ã¼¿¡¼­ ÇÑ ¹ø¿¡ 256°¡Áö »ùÇÃÀ» ´Ù·é´Ù. »ç¿ëÇÏ´Â »ùÇÃÀÇ ¼ö´Â FFT °´Ã¼¸¦ ÅëÇØ
+    // »ùÇÃµéÀ» ½ÇÇàÇÏ°í °¡Á®¿Ã ÁÖÆÄ¼öÀÇ ¼ö¿Í ÀÏÄ¡ÇÑ´Ù. ´Ù¸¥ Å©±â¸¦ ¸¶À½´ë·Î ÁöÁ¤ÇØµµ µÇÁö¸¸, ¸Ş¸ğ¸®¿Í ¼º´É Ãø¸éÀ» ¹İµå½Ã °í·ÁÇØ¾ß ÇÑ´Ù.
+    // Àû¿ëµÉ ¼öÇĞÀû °è»êÀÌ ÇÁ·Î¼¼¼­ÀÇ ¼º´É°ú ¹ĞÁ¢ÇÑ °ü°è¸¦ º¸ÀÌ±â ¶§¹®ÀÌ´Ù.
 
     private RealDoubleFFT transformer;
     int blockSize = 256;
@@ -49,14 +49,14 @@ public class MainActivity_back extends AppCompatActivity {
     private boolean started = false;
     private boolean Ecostarted = false;
 
-    // RecordAudioëŠ” ì—¬ê¸°ì—ì„œ ì •ì˜ë˜ëŠ” ë‚´ë¶€ í´ë˜ìŠ¤ë¡œì„œ AsyncTaskë¥¼ í™•ì¥í•œë‹¤.
+    // RecordAudio´Â ¿©±â¿¡¼­ Á¤ÀÇµÇ´Â ³»ºÎ Å¬·¡½º·Î¼­ AsyncTask¸¦ È®ÀåÇÑ´Ù.
 
     private RecordAudio recordTask;
     private EcoVolume ecoTask;
 
-    // Bitmap ì´ë¯¸ì§€ë¥¼ í‘œì‹œí•˜ê¸° ìœ„í•´ ImageViewë¥¼ ì‚¬ìš©í•œë‹¤. ì´ ì´ë¯¸ì§€ëŠ” í˜„ì¬ ì˜¤ë””ì˜¤ ìŠ¤íŠ¸ë¦¼ì—ì„œ ì£¼íŒŒìˆ˜ë“¤ì˜ ë ˆë²¨ì„ ë‚˜íƒ€ë‚¸ë‹¤.
+    // Bitmap ÀÌ¹ÌÁö¸¦ Ç¥½ÃÇÏ±â À§ÇØ ImageView¸¦ »ç¿ëÇÑ´Ù. ÀÌ ÀÌ¹ÌÁö´Â ÇöÀç ¿Àµğ¿À ½ºÆ®¸²¿¡¼­ ÁÖÆÄ¼öµéÀÇ ·¹º§À» ³ªÅ¸³½´Ù.
 
-    // ì´ ë ˆë²¨ë“¤ì„ ê·¸ë¦¬ë ¤ë©´ Bitmapì—ì„œ êµ¬ì„±í•œ Canvas ê°ì²´ì™€ Paintê°ì²´ê°€ í•„ìš”í•˜ë‹¤.
+    // ÀÌ ·¹º§µéÀ» ±×¸®·Á¸é Bitmap¿¡¼­ ±¸¼ºÇÑ Canvas °´Ã¼¿Í Paint°´Ã¼°¡ ÇÊ¿äÇÏ´Ù.
     private ImageView imageView;
     private Bitmap bitmap;
     private Canvas canvas;
@@ -102,11 +102,11 @@ public class MainActivity_back extends AppCompatActivity {
             }
         });
 
-        // RealDoubleFFT í´ë˜ìŠ¤ ì»¨ìŠ¤íŠ¸ëŸ­í„°ëŠ” í•œë²ˆì— ì²˜ë¦¬í•  ìƒ˜í”Œë“¤ì˜ ìˆ˜ë¥¼ ë°›ëŠ”ë‹¤. ê·¸ë¦¬ê³  ì¶œë ¥ë  ì£¼íŒŒìˆ˜ ë²”ìœ„ë“¤ì˜ ìˆ˜ë¥¼ ë‚˜íƒ€ë‚¸ë‹¤.
+        // RealDoubleFFT Å¬·¡½º ÄÁ½ºÆ®·°ÅÍ´Â ÇÑ¹ø¿¡ Ã³¸®ÇÒ »ùÇÃµéÀÇ ¼ö¸¦ ¹Ş´Â´Ù. ±×¸®°í Ãâ·ÂµÉ ÁÖÆÄ¼ö ¹üÀ§µéÀÇ ¼ö¸¦ ³ªÅ¸³½´Ù.
 
         transformer = new RealDoubleFFT(blockSize);
 
-        // ImageView ë° ê´€ë ¨ ê°ì²´ ì„¤ì • ë¶€ë¶„
+        // ImageView ¹× °ü·Ã °´Ã¼ ¼³Á¤ ºÎºĞ
 
         imageView = (ImageView)findViewById(R.id.ImageView01);
         bitmap = Bitmap.createBitmap((int)256, (int)100, Bitmap.Config.ARGB_8888);
@@ -117,23 +117,23 @@ public class MainActivity_back extends AppCompatActivity {
         dBValue = (TextView)findViewById(R.id.dbValue);
     }
 
-    // ì´ ì•¡í‹°ë¹„í‹°ì˜ ì‘ì—…ë“¤ì€ ëŒ€ë¶€ë¶„ RecordAudioë¼ëŠ” í´ë˜ìŠ¤ì—ì„œ ì§„í–‰ëœë‹¤. ì´ í´ë˜ìŠ¤ëŠ” AsyncTaskë¥¼ í™•ì¥í•œë‹¤.
-    // AsyncTaskë¥¼ ì‚¬ìš©í•˜ë©´ ì‚¬ìš©ì ì¸í„°í˜ì´ìŠ¤ë¥¼ ë©í•˜ë‹ˆ ìˆê²Œ í•˜ëŠ” ë©”ì†Œë“œë“¤ì„ ë³„ë„ì˜ ìŠ¤ë ˆë“œë¡œ ì‹¤í–‰í•œë‹¤.
-    // doInBackground ë©”ì†Œë“œì— ë‘˜ ìˆ˜ ìˆëŠ” ê²ƒì´ë©´ ë­ë“ ì§€ ì´ëŸ° ì‹ìœ¼ë¡œ ì‹¤í–‰í•  ìˆ˜ ìˆë‹¤.
+    // ÀÌ ¾×Æ¼ºñÆ¼ÀÇ ÀÛ¾÷µéÀº ´ëºÎºĞ RecordAudio¶ó´Â Å¬·¡½º¿¡¼­ ÁøÇàµÈ´Ù. ÀÌ Å¬·¡½º´Â AsyncTask¸¦ È®ÀåÇÑ´Ù.
+    // AsyncTask¸¦ »ç¿ëÇÏ¸é »ç¿ëÀÚ ÀÎÅÍÆäÀÌ½º¸¦ ¸ÛÇÏ´Ï ÀÖ°Ô ÇÏ´Â ¸Ş¼ÒµåµéÀ» º°µµÀÇ ½º·¹µå·Î ½ÇÇàÇÑ´Ù.
+    // doInBackground ¸Ş¼Òµå¿¡ µÑ ¼ö ÀÖ´Â °ÍÀÌ¸é ¹¹µçÁö ÀÌ·± ½ÄÀ¸·Î ½ÇÇàÇÒ ¼ö ÀÖ´Ù.
     private class RecordAudio extends AsyncTask<Void, double[], Void>{
 
         @Override
         protected Void doInBackground(Void... params) {
             try{
-                // AudioRecordë¥¼ ì„¤ì •í•˜ê³  ì‚¬ìš©í•œë‹¤.
+                // AudioRecord¸¦ ¼³Á¤ÇÏ°í »ç¿ëÇÑ´Ù.
                 int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
 
                 AudioRecord audioRecord = new AudioRecord(
                         MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
 
 
-                // shortë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ bufferëŠ” ì›ì‹œ PCM ìƒ˜í”Œì„ AudioRecord ê°ì²´ì—ì„œ ë°›ëŠ”ë‹¤.
-                // doubleë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ toTransformì€ ê°™ì€ ë°ì´í„°ë¥¼ ë‹´ì§€ë§Œ double íƒ€ì…ì¸ë°, FFT í´ë˜ìŠ¤ì—ì„œëŠ” doubleíƒ€ì…ì´ í•„ìš”í•´ì„œì´ë‹¤.
+                // short·Î ÀÌ·ïÁø ¹è¿­ÀÎ buffer´Â ¿ø½Ã PCM »ùÇÃÀ» AudioRecord °´Ã¼¿¡¼­ ¹Ş´Â´Ù.
+                // double·Î ÀÌ·ïÁø ¹è¿­ÀÎ toTransformÀº °°Àº µ¥ÀÌÅÍ¸¦ ´ãÁö¸¸ double Å¸ÀÔÀÎµ¥, FFT Å¬·¡½º¿¡¼­´Â doubleÅ¸ÀÔÀÌ ÇÊ¿äÇØ¼­ÀÌ´Ù.
 
                 short[] buffer = new short[blockSize];
                 double[] toTransform = new double[blockSize];
@@ -142,26 +142,26 @@ public class MainActivity_back extends AppCompatActivity {
                 while(started){
                     int bufferReadResult = audioRecord.read(buffer, 0, blockSize);
 
-                    // AudioRecord ê°ì²´ì—ì„œ ë°ì´í„°ë¥¼ ì½ì€ ë‹¤ìŒì—ëŠ” short íƒ€ì…ì˜ ë³€ìˆ˜ë“¤ì„ double íƒ€ì…ìœ¼ë¡œ ë°”ê¾¸ëŠ” ë£¨í”„ë¥¼ ì²˜ë¦¬í•œë‹¤.
-                    // ì§ì ‘ íƒ€ì… ë³€í™˜(casting)ìœ¼ë¡œ ì´ ì‘ì—…ì„ ì²˜ë¦¬í•  ìˆ˜ ì—†ë‹¤. ê°’ë“¤ì´ ì „ì²´ ë²”ìœ„ê°€ ì•„ë‹ˆë¼ -1.0ì—ì„œ 1.0 ì‚¬ì´ë¼ì„œ ê·¸ë ‡ë‹¤
-                    // shortë¥¼ 32,768.0(Short.MAX_VALUE) ìœ¼ë¡œ ë‚˜ëˆ„ë©´ doubleë¡œ íƒ€ì…ì´ ë°”ë€ŒëŠ”ë°, ì´ ê°’ì´ shortì˜ ìµœëŒ€ê°’ì´ê¸° ë•Œë¬¸ì´ë‹¤.
+                    // AudioRecord °´Ã¼¿¡¼­ µ¥ÀÌÅÍ¸¦ ÀĞÀº ´ÙÀ½¿¡´Â short Å¸ÀÔÀÇ º¯¼öµéÀ» double Å¸ÀÔÀ¸·Î ¹Ù²Ù´Â ·çÇÁ¸¦ Ã³¸®ÇÑ´Ù.
+                    // Á÷Á¢ Å¸ÀÔ º¯È¯(casting)À¸·Î ÀÌ ÀÛ¾÷À» Ã³¸®ÇÒ ¼ö ¾ø´Ù. °ªµéÀÌ ÀüÃ¼ ¹üÀ§°¡ ¾Æ´Ï¶ó -1.0¿¡¼­ 1.0 »çÀÌ¶ó¼­ ±×·¸´Ù
+                    // short¸¦ 32,768.0(Short.MAX_VALUE) À¸·Î ³ª´©¸é double·Î Å¸ÀÔÀÌ ¹Ù²î´Âµ¥, ÀÌ °ªÀÌ shortÀÇ ÃÖ´ë°ªÀÌ±â ¶§¹®ÀÌ´Ù.
 
                     for(int i = 0; i < blockSize && i < bufferReadResult; i++){
-                        toTransform[i] = (double)buffer[i] / Short.MAX_VALUE; // ë¶€í˜¸ ìˆëŠ” 16ë¹„íŠ¸
+                        toTransform[i] = (double)buffer[i] / Short.MAX_VALUE; // ºÎÈ£ ÀÖ´Â 16ºñÆ®
 
                     //    Log.d("Read Value", " #i value : " + i +" #Buffer : " + buffer[i] + " #Transform Value : " + toTransform[i]);
                     }
 
-                    // ì´ì œ doubleê°’ë“¤ì˜ ë°°ì—´ì„ FFT ê°ì²´ë¡œ ë„˜ê²¨ì¤€ë‹¤. FFT ê°ì²´ëŠ” ì´ ë°°ì—´ì„ ì¬ì‚¬ìš©í•˜ì—¬ ì¶œë ¥ ê°’ì„ ë‹´ëŠ”ë‹¤. í¬í•¨ëœ ë°ì´í„°ëŠ” ì‹œê°„ ë„ë©”ì¸ì´ ì•„ë‹ˆë¼
-                    // ì£¼íŒŒìˆ˜ ë„ë©”ì¸ì— ì¡´ì¬í•œë‹¤. ì´ ë§ì€ ë°°ì—´ì˜ ì²« ë²ˆì§¸ ìš”ì†Œê°€ ì‹œê°„ìƒìœ¼ë¡œ ì²« ë²ˆì§¸ ìƒ˜í”Œì´ ì•„ë‹ˆë¼ëŠ” ì–˜ê¸°ë‹¤. ë°°ì—´ì˜ ì²« ë²ˆì§¸ ìš”ì†ŒëŠ” ì²« ë²ˆì§¸ ì£¼íŒŒìˆ˜ ì§‘í•©ì˜ ë ˆë²¨ì„ ë‚˜íƒ€ë‚¸ë‹¤.
+                    // ÀÌÁ¦ double°ªµéÀÇ ¹è¿­À» FFT °´Ã¼·Î ³Ñ°ÜÁØ´Ù. FFT °´Ã¼´Â ÀÌ ¹è¿­À» Àç»ç¿ëÇÏ¿© Ãâ·Â °ªÀ» ´ã´Â´Ù. Æ÷ÇÔµÈ µ¥ÀÌÅÍ´Â ½Ã°£ µµ¸ŞÀÎÀÌ ¾Æ´Ï¶ó
+                    // ÁÖÆÄ¼ö µµ¸ŞÀÎ¿¡ Á¸ÀçÇÑ´Ù. ÀÌ ¸»Àº ¹è¿­ÀÇ Ã¹ ¹øÂ° ¿ä¼Ò°¡ ½Ã°£»óÀ¸·Î Ã¹ ¹øÂ° »ùÇÃÀÌ ¾Æ´Ï¶ó´Â ¾ê±â´Ù. ¹è¿­ÀÇ Ã¹ ¹øÂ° ¿ä¼Ò´Â Ã¹ ¹øÂ° ÁÖÆÄ¼ö ÁıÇÕÀÇ ·¹º§À» ³ªÅ¸³½´Ù.
 
-                    // 256ê°€ì§€ ê°’(ë²”ìœ„)ì„ ì‚¬ìš©í•˜ê³  ìˆê³  ìƒ˜í”Œ ë¹„ìœ¨ì´ 8,000 ì´ë¯€ë¡œ ë°°ì—´ì˜ ê° ìš”ì†Œê°€ ëŒ€ëµ 15.625Hzë¥¼ ë‹´ë‹¹í•˜ê²Œ ëœë‹¤. 15.625ë¼ëŠ” ìˆ«ìëŠ” ìƒ˜í”Œ ë¹„ìœ¨ì„ ë°˜ìœ¼ë¡œ ë‚˜ëˆ„ê³ (ìº¡ì³í•  ìˆ˜ ìˆëŠ”
-                    // ìµœëŒ€ ì£¼íŒŒìˆ˜ëŠ” ìƒ˜í”Œ ë¹„ìœ¨ì˜ ë°˜ì´ë‹¤.), ë‹¤ì‹œ 256ìœ¼ë¡œ ë‚˜ëˆ„ì–´ ë‚˜ì˜¨ ê²ƒì´ë‹¤. ë”°ë¼ì„œ ë°°ì—´ì˜ ì²« ë²ˆì§¸ ìš”ì†Œë¡œ ë‚˜íƒ€ë‚œ ë°ì´í„°ëŠ” ì˜(0)ê³¼ 15.625Hz ì‚¬ì´ì—
-                    // í•´ë‹¹í•˜ëŠ” ì˜¤ë””ì˜¤ ë ˆë²¨ì„ ì˜ë¯¸í•œë‹¤.
+                    // 256°¡Áö °ª(¹üÀ§)À» »ç¿ëÇÏ°í ÀÖ°í »ùÇÃ ºñÀ²ÀÌ 8,000 ÀÌ¹Ç·Î ¹è¿­ÀÇ °¢ ¿ä¼Ò°¡ ´ë·« 15.625Hz¸¦ ´ã´çÇÏ°Ô µÈ´Ù. 15.625¶ó´Â ¼ıÀÚ´Â »ùÇÃ ºñÀ²À» ¹İÀ¸·Î ³ª´©°í(Ä¸ÃÄÇÒ ¼ö ÀÖ´Â
+                    // ÃÖ´ë ÁÖÆÄ¼ö´Â »ùÇÃ ºñÀ²ÀÇ ¹İÀÌ´Ù.), ´Ù½Ã 256À¸·Î ³ª´©¾î ³ª¿Â °ÍÀÌ´Ù. µû¶ó¼­ ¹è¿­ÀÇ Ã¹ ¹øÂ° ¿ä¼Ò·Î ³ªÅ¸³­ µ¥ÀÌÅÍ´Â ¿µ(0)°ú 15.625Hz »çÀÌ¿¡
+                    // ÇØ´çÇÏ´Â ¿Àµğ¿À ·¹º§À» ÀÇ¹ÌÇÑ´Ù.
 
                     transformer.ft(toTransform);
 
-                    // publishProgressë¥¼ í˜¸ì¶œí•˜ë©´ onProgressUpdateê°€ í˜¸ì¶œëœë‹¤.
+                    // publishProgress¸¦ È£ÃâÇÏ¸é onProgressUpdate°¡ È£ÃâµÈ´Ù.
                     publishProgress(toTransform);
 
                     final int result = calculatePowerDb(buffer, 0, blockSize)+90;
@@ -182,10 +182,10 @@ public class MainActivity_back extends AppCompatActivity {
 
         }
 
-        // onProgressUpdateëŠ” ìš°ë¦¬ ì—‘í‹°ë¹„í‹°ì˜ ë©”ì¸ ìŠ¤ë ˆë“œë¡œ ì‹¤í–‰ëœë‹¤. ë”°ë¼ì„œ ì•„ë¬´ëŸ° ë¬¸ì œë¥¼ ì¼ìœ¼í‚¤ì§€ ì•Šê³  ì‚¬ìš©ì ì¸í„°í˜ì´ìŠ¤ì™€ ìƒí˜¸ì‘ìš©í•  ìˆ˜ ìˆë‹¤.
-        // ì´ë²ˆ êµ¬í˜„ì—ì„œëŠ” onProgressUpdateê°€ FFT ê°ì²´ë¥¼ í†µí•´ ì‹¤í–‰ëœ ë‹¤ìŒ ë°ì´í„°ë¥¼ ë„˜ê²¨ì¤€ë‹¤. ì´ ë©”ì†Œë“œëŠ” ìµœëŒ€ 100í”½ì…€ì˜ ë†’ì´ë¡œ ì¼ë ¨ì˜ ì„¸ë¡œì„ ìœ¼ë¡œ
-        // í™”ë©´ì— ë°ì´í„°ë¥¼ ê·¸ë¦°ë‹¤. ê° ì„¸ë¡œì„ ì€ ë°°ì—´ì˜ ìš”ì†Œ í•˜ë‚˜ì”©ì„ ë‚˜íƒ€ë‚´ë¯€ë¡œ ë²”ìœ„ëŠ” 15.625Hzë‹¤. ì²« ë²ˆì§¸ í–‰ì€ ë²”ìœ„ê°€ 0ì—ì„œ 15.625Hzì¸ ì£¼íŒŒìˆ˜ë¥¼ ë‚˜íƒ€ë‚´ê³ ,
-        // ë§ˆì§€ë§‰ í–‰ì€ 3,984.375ì—ì„œ 4,000Hzì¸ ì£¼íŒŒìˆ˜ë¥¼ ë‚˜íƒ€ë‚¸ë‹¤.
+        // onProgressUpdate´Â ¿ì¸® ¿¢Æ¼ºñÆ¼ÀÇ ¸ŞÀÎ ½º·¹µå·Î ½ÇÇàµÈ´Ù. µû¶ó¼­ ¾Æ¹«·± ¹®Á¦¸¦ ÀÏÀ¸Å°Áö ¾Ê°í »ç¿ëÀÚ ÀÎÅÍÆäÀÌ½º¿Í »óÈ£ÀÛ¿ëÇÒ ¼ö ÀÖ´Ù.
+        // ÀÌ¹ø ±¸Çö¿¡¼­´Â onProgressUpdate°¡ FFT °´Ã¼¸¦ ÅëÇØ ½ÇÇàµÈ ´ÙÀ½ µ¥ÀÌÅÍ¸¦ ³Ñ°ÜÁØ´Ù. ÀÌ ¸Ş¼Òµå´Â ÃÖ´ë 100ÇÈ¼¿ÀÇ ³ôÀÌ·Î ÀÏ·ÃÀÇ ¼¼·Î¼±À¸·Î
+        // È­¸é¿¡ µ¥ÀÌÅÍ¸¦ ±×¸°´Ù. °¢ ¼¼·Î¼±Àº ¹è¿­ÀÇ ¿ä¼Ò ÇÏ³ª¾¿À» ³ªÅ¸³»¹Ç·Î ¹üÀ§´Â 15.625Hz´Ù. Ã¹ ¹øÂ° ÇàÀº ¹üÀ§°¡ 0¿¡¼­ 15.625HzÀÎ ÁÖÆÄ¼ö¸¦ ³ªÅ¸³»°í,
+        // ¸¶Áö¸· ÇàÀº 3,984.375¿¡¼­ 4,000HzÀÎ ÁÖÆÄ¼ö¸¦ ³ªÅ¸³½´Ù.
 
         @Override
         protected void onProgressUpdate(double[]... toTransform) {
@@ -204,7 +204,7 @@ public class MainActivity_back extends AppCompatActivity {
 
     private class EcoVolume extends AsyncTask<Void, Double, Void>{
 
-        // Sample Smartphone ë³¼ë¥¨ ë‹¹ ìŒì••ì „ë¥˜
+        // Sample Smartphone º¼·ı ´ç À½¾ĞÀü·ù
         /*
         0 = 0.00
         1 = 0.70
@@ -223,7 +223,7 @@ public class MainActivity_back extends AppCompatActivity {
         14 = 51.85
         15 = 57.92
         */
-        // Sample Ear Receiver ìŒì•• : 112dB/mW, ì„í”¼ë˜ìŠ¤ : 16ohm
+        // Sample Ear Receiver À½¾Ğ : 112dB/mW, ÀÓÇÇ´ø½º : 16ohm
         private double[] VoltagePerVol =
                 {0.0, 0.7, 1.79, 3.15, 4.56, 6.63, 8.18, 10.4, 12.98, 16.63, 21.03, 25.98, 32.83, 41.25, 51.85, 57.92};
         private int Impedance = 16;
@@ -240,13 +240,13 @@ public class MainActivity_back extends AppCompatActivity {
                     int mCurvol = audiomanager.getStreamVolume(audiomanager.STREAM_MUSIC);
                     Log.w("Current Volume", "volume : " + mCurvol);
 
-                    // ì „ë ¥ ê³„ì‚°ì‹ : W = V * V / R
+                    // Àü·Â °è»ê½Ä : W = V * V / R
                     double Watt = (VoltagePerVol[mCurvol] * VoltagePerVol[mCurvol]) / Impedance;
                     double MillWatt = Watt/1000;
-                    // ì „ë ¥ì—ì„œì˜ dB ê³„ì‚°ì‹ : dB = 10 * log(ì„í”¼ë˜ìŠ¤ì˜ ì „ë ¥/í˜„ì¬ ë³¼ë¥¨ ì „ë ¥)
+                    // Àü·Â¿¡¼­ÀÇ dB °è»ê½Ä : dB = 10 * log(ÀÓÇÇ´ø½ºÀÇ Àü·Â/ÇöÀç º¼·ı Àü·Â)
                     double dB = 10 * Math.log10(OhmofImp / MillWatt);
 
-                    // ì‹¤ì œ ì¶œë ¥ ë³¼ë¥¨ dB : ê°ë„ì˜ ë°ì‹œë²¨ - í˜„ì¬ ì „ë ¥ì˜ ë°ì‹œë²¨
+                    // ½ÇÁ¦ Ãâ·Â º¼·ı dB : °¨µµÀÇ µ¥½Ãº§ - ÇöÀç Àü·ÂÀÇ µ¥½Ãº§
                     double SPL = Sensitivity - dB;
 
                     publishProgress(SPL);
@@ -302,16 +302,16 @@ public class MainActivity_back extends AppCompatActivity {
             sqsum += v * v;
         }
 
-        // sqsum is the sum of all (signal+bias)Â², so
-        // sqsum = sum(signalÂ²) + samples * biasÂ²
+        // sqsum is the sum of all (signal+bias)©÷, so
+        // sqsum = sum(signal©÷) + samples * bias©÷
         // hence
-        // sum(signalÂ²) = sqsum - samples * biasÂ²
+        // sum(signal©÷) = sqsum - samples * bias©÷
         // Bias is simply the average value, i.e.
         // bias = sum / samples
-        // Since power = sum(signalÂ²) / samples, we have
-        // power = (sqsum - samples * sumÂ² / samplesÂ²) / samples
+        // Since power = sum(signal©÷) / samples, we have
+        // power = (sqsum - samples * sum©÷ / samples©÷) / samples
         // so
-        // power = (sqsum - sumÂ² / samples) / samples
+        // power = (sqsum - sum©÷ / samples) / samples
         double power = (sqsum - sum * sum / samples) / samples;
 
         // Scale to the range 0 - 1.

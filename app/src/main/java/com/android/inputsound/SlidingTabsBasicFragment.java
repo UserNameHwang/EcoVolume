@@ -1,13 +1,5 @@
 package com.android.inputsound;
 
-import com.android.view.LineGraphSetting;
-import com.android.view.SlidingTabLayout;
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.gc.materialdesign.views.CheckBox;
-import com.gc.materialdesign.views.Slider;
-import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
-import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,6 +22,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.view.LineGraphSetting;
+import com.android.view.SlidingTabLayout;
+import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.CheckBox;
+import com.gc.materialdesign.views.Slider;
+import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
+import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
+
 import java.util.List;
 
 
@@ -38,7 +38,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 	private SlidingTabLayout mSlidingTabLayout;
 
 	private ViewPager mViewPager;
-	private View homeView, logView, infoView, settingView;
+	private View homeView, logView, visualView, settingView;
 
 	private RecordAudio AudioDCBTask;
 	int blockSize = 256;
@@ -56,13 +56,19 @@ public class SlidingTabsBasicFragment extends Fragment {
 	private int inDCB, outDCB;
 	private int FirstCheck=0, SecondCheck=0, ThirdCheck=0, LastCheck=0;
 
+	//visualizer
+	private LinearLayout mInputLayout,mAnalyLayout,mOutputLayout;
+	private VisualizerView mInputView,mAnalyView,mOutputView;
+	private static final float VISUALIZER_HEIGHT_DIP = 130f;
+	private short[] inBuffer,analyBuffer,outBuffer;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		infohandler = new Handler() {
 			public void handleMessage(Message msg){
-				infohandler.sendEmptyMessageDelayed(0, 15000); // 15ì´ˆì— í•œ ë²ˆ refresh
+				infohandler.sendEmptyMessageDelayed(0, 15000); // 15ÃÊ¿¡ ÇÑ ¹ø refresh
 				SaveDCB.setInDCB(inDCB);
 				SaveDCB.setOutDCB(outDCB);
 
@@ -87,7 +93,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 	// PageAdapter
 	class SamplePagerAdapter extends PagerAdapter {
 
-		// Tabì˜ ê°¯ìˆ˜ë¥¼ ì§€ì •í•œë‹¤.
+		// TabÀÇ °¹¼ö¸¦ ÁöÁ¤ÇÑ´Ù.
 		@Override
 		public int getCount() {
 			return 4;
@@ -105,7 +111,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 			return super.getItemPosition(object);
 		}
 
-		// TabTitle ê´€ë¦¬.
+		// TabTitle °ü¸®.
 		@Override
 		public CharSequence getPageTitle(int position) {
 
@@ -119,7 +125,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 				return "Setting";
 			}
 		}
-		
+
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 
@@ -141,8 +147,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 					NoiseButton.setTextColor(Color.parseColor("#000000"));
 					EcoButton.setTextColor(Color.parseColor("#000000"));
 
-					// í„°ì¹˜ ì´ë²¤íŠ¸ disable
-					// true ë¥¼ ë¦¬í„´í•˜ë©´ disable
+					// ÅÍÄ¡ ÀÌº¥Æ® disable
+					// true ¸¦ ¸®ÅÏÇÏ¸é disable
 					ecoSwitch.setOnTouchListener(new View.OnTouchListener() {
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
@@ -157,16 +163,16 @@ public class SlidingTabsBasicFragment extends Fragment {
 						}
 					});
 
-					// Service ì‹¤í–‰ ì—¬ë¶€ íŒë‹¨
+					// Service ½ÇÇà ¿©ºÎ ÆÇ´Ü
 					boolean EcosvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
 					Log.w("svc Check", "" + EcosvcRunning);
 					if(EcosvcRunning) {
 						ecoSwitch.setChecked(true);
-						EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì¤‘ë‹¨í•˜ê¸°");
+						EcoButton.setText("¿¡ÄÚº¼·ı\nÁß´ÜÇÏ±â");
 						SaveUserSetting.setEcoVolumeStarted(true);
 					}
 					else {
-						EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì‹œì‘í•˜ê¸°");
+						EcoButton.setText("¿¡ÄÚº¼·ı\n½ÃÀÛÇÏ±â");
 						SaveUserSetting.setEcoVolumeStarted(false);
 					}
 
@@ -174,11 +180,11 @@ public class SlidingTabsBasicFragment extends Fragment {
 					Log.w("svc Check", "" + NCsvcRunning);
 					if(NCsvcRunning) {
 						noiseSwitch.setChecked(true);
-						NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì¤‘ë‹¨í•˜ê¸°");
+						NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\nÁß´ÜÇÏ±â");
 						SaveUserSetting.setNoiseCancelStarted(true);
 					}
 					else {
-						NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì‹œì‘í•˜ê¸°");
+						NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\n½ÃÀÛÇÏ±â");
 						SaveUserSetting.setNoiseCancelStarted(false);
 					}
 					container.addView(homeView);
@@ -222,10 +228,33 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 			else if (position == 2) {
 				if(ThirdCheck == 0) {
-					infoView = getActivity().getLayoutInflater().inflate(
-							R.layout.testing, container, false);
-					container.addView(infoView);
-					final Slider slider = (Slider)infoView.findViewById(R.id.testSlider);
+					visualView = getActivity().getLayoutInflater().inflate(
+							R.layout.third_visual, container, false);
+					container.addView(visualView);
+
+					mInputLayout = (LinearLayout)visualView.findViewById(R.id.InputLine);
+					mAnalyLayout = (LinearLayout) visualView.findViewById(R.id.AnalyLine);
+					mOutputLayout = (LinearLayout) visualView.findViewById(R.id.OutputLine);
+
+
+
+//					mInputView = new VisualizerView(getActivity());
+//					mAnalyView = new VisualizerView(getActivity());
+//					mOutputView = new VisualizerView(getActivity());
+
+					mInputView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+							(int) (VISUALIZER_HEIGHT_DIP * getResources().getDisplayMetrics().density)));
+					mAnalyView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+							(int) (VISUALIZER_HEIGHT_DIP * getResources().getDisplayMetrics().density)));
+					mOutputView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+							(int) (VISUALIZER_HEIGHT_DIP * getResources().getDisplayMetrics().density)));
+
+					mInputLayout.addView(mInputView);
+					mAnalyLayout.addView(mAnalyView);
+					mOutputLayout.addView(mOutputView);
+
+
+					/*final Slider slider = (Slider)infoView.findViewById(R.id.testSlider);
 
 					slider.setOnValueChangedListener(new Slider.OnValueChangedListener() {
 						@Override
@@ -243,14 +272,14 @@ public class SlidingTabsBasicFragment extends Fragment {
 								mViewPager.requestDisallowInterceptTouchEvent(true);
 							return false;
 						}
-					});
+					});*/
 
 					ThirdCheck++;
-					return infoView;
+					return visualView;
 				}
 				else{
-					container.addView(infoView);
-					return infoView;
+					container.addView(visualView);
+					return visualView;
 				}
 
 			} else {
@@ -404,7 +433,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 		}
 
-		// serviceName : manifestì—ì„œ ì„¤ì •í•œ ì„œë¹„ìŠ¤ì˜ ì´ë¦„
+		// serviceName : manifest¿¡¼­ ¼³Á¤ÇÑ ¼­ºñ½ºÀÇ ÀÌ¸§
 		public Boolean isServiceRunning(String serviceName) {
 			Context c = getActivity();
 			ActivityManager manager = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
@@ -421,7 +450,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 	}
 
-	// AudioRecord ê°ì²´ì—ì„œ ì£¼íŒŒìˆ˜ëŠ” 8kHz, ì˜¤ë””ì˜¤ ì±„ë„ì€ í•˜ë‚˜, ìƒ˜í”Œì€ 16ë¹„íŠ¸ë¥¼ ì‚¬ìš©
+	// AudioRecord °´Ã¼¿¡¼­ ÁÖÆÄ¼ö´Â 8kHz, ¿Àµğ¿À Ã¤³ÎÀº ÇÏ³ª, »ùÇÃÀº 16ºñÆ®¸¦ »ç¿ë
 	int frequency = 8000;
 	int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
 
@@ -431,7 +460,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 		@Override
 		public void run(){
-			// Sample Smartphone ë³¼ë¥¨ ë‹¹ ìŒì••ì „ë¥˜
+			// Sample Smartphone º¼·ı ´ç À½¾ĞÀü·ù
 			/* Volume = mA
 			0 = 0.00			1 = 0.70
 			2 = 1.79			3 = 3.15
@@ -442,14 +471,14 @@ public class SlidingTabsBasicFragment extends Fragment {
 			12 = 32.83			13 = 41.25
 			14 = 51.85			15 = 57.92
 			*/
-			// Sample Ear Receiver ìŒì•• : 112dB/mW, ì„í”¼ë˜ìŠ¤ : 16ohm
+			// Sample Ear Receiver À½¾Ğ : 112dB/mW, ÀÓÇÇ´ø½º : 16ohm
 			double[] VoltagePerVol =
 					{0.0, 0.7, 1.79, 3.15, 4.56, 6.63, 8.18, 10.4, 12.98, 16.63, 21.03, 25.98, 32.83, 41.25, 51.85, 57.92};
 			int Impedance = 16;
 			double OhmofImp = 1;
 			int Sensitivity = 112;
 
-			// AudioRecordë¥¼ ì„¤ì •í•˜ê³  ì‚¬ìš©í•œë‹¤.
+			// AudioRecord¸¦ ¼³Á¤ÇÏ°í »ç¿ëÇÑ´Ù.
 			int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
 
 			AudioRecord audioRecord = new AudioRecord(
@@ -462,20 +491,62 @@ public class SlidingTabsBasicFragment extends Fragment {
 			SaveDCB.setAudioRecord(audioRecord);
 			//////////////////////////////////
 
+			//////////////////////////////////////// visualizer /////////////////////////////////////////
+			int isFirst=0;
+			mInputView = new VisualizerView(getActivity());
+			mAnalyView = new VisualizerView(getActivity());
+			mOutputView = new VisualizerView(getActivity());
+
+			inBuffer = new short[blockSize];
+			analyBuffer = new short[blockSize];
+			outBuffer = new short[blockSize];
+
+
 			while(true) {
 				//////////////////////////////////// Input dB Calculate ////////////////////////////////////
 
-				// shortë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ bufferëŠ” ì›ì‹œ PCM ìƒ˜í”Œì„ AudioRecord ê°ì²´ì—ì„œ ë°›ëŠ”ë‹¤.
-				// doubleë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ toTransformì€ ê°™ì€ ë°ì´í„°ë¥¼ ë‹´ì§€ë§Œ double íƒ€ì…ì¸ë°, FFT í´ë˜ìŠ¤ì—ì„œëŠ” doubleíƒ€ì…ì´ í•„ìš”í•´ì„œì´ë‹¤.
+				// short·Î ÀÌ·ïÁø ¹è¿­ÀÎ buffer´Â ¿ø½Ã PCM »ùÇÃÀ» AudioRecord °´Ã¼¿¡¼­ ¹Ş´Â´Ù.
+				// double·Î ÀÌ·ïÁø ¹è¿­ÀÎ toTransformÀº °°Àº µ¥ÀÌÅÍ¸¦ ´ãÁö¸¸ double Å¸ÀÔÀÎµ¥, FFT Å¬·¡½º¿¡¼­´Â doubleÅ¸ÀÔÀÌ ÇÊ¿äÇØ¼­ÀÌ´Ù.
 
 				//short[] buffer = new short[blockSize];
 				audioRecord.startRecording();
 				audioRecord.read(buffer, 0, blockSize);
 
+				if(isFirst==0){
+					for(int i=0;i<blockSize;i++){
+						inBuffer[i]=buffer[i];
+						analyBuffer[i] = (short)(buffer[i]/5);
+						outBuffer[i] = (short)(-1*buffer[i]/5);
+					}
+					isFirst++;
+				}
+				else{
+					for(int i=0;i<blockSize;i++){
+						if(buffer[i]!=0){
+							inBuffer[i]=buffer[i];
+							analyBuffer[i] = (short)(buffer[i]/5);
+							outBuffer[i] = (short)(-1*buffer[i]/5);
+						}
+					}
+				}
+
+
 				final int result = calculatePowerDb(buffer, 0, blockSize) + 90;
 
 				Log.w("Now Decibel", "input decibel : " + result);
 				inDCB = result;
+
+
+				///////////////////////////////////// visualizer /////////////////////////////////////////
+
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mInputView.updateVisualizer(inBuffer);
+						mAnalyView.updateVisualizer(analyBuffer);
+						mOutputView.updateVisualizer(outBuffer);
+					}
+				});
 
 
 				//////////////////////////////////// Output dB Calculate ////////////////////////////////////
@@ -484,17 +555,17 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 				int mCurvol = audiomanager.getStreamVolume(audiomanager.STREAM_MUSIC);
 
-				// ì „ë ¥ ê³„ì‚°ì‹ : W = V * V / R
+				// Àü·Â °è»ê½Ä : W = V * V / R
 				double Watt = (VoltagePerVol[mCurvol] * VoltagePerVol[mCurvol]) / Impedance;
 				double MillWatt = Watt / 1000;
 
-				// ì „ë ¥ì—ì„œì˜ dB ê³„ì‚°ì‹ : dB = 10 * log(ì„í”¼ë˜ìŠ¤ì˜ ì „ë ¥/í˜„ì¬ ë³¼ë¥¨ ì „ë ¥)
+				// Àü·Â¿¡¼­ÀÇ dB °è»ê½Ä : dB = 10 * log(ÀÓÇÇ´ø½ºÀÇ Àü·Â/ÇöÀç º¼·ı Àü·Â)
 				double dB;
 				if (MillWatt != 0)
 					dB = 10 * Math.log10(OhmofImp / MillWatt);
 				else
 					dB = Sensitivity;
-				// ì‹¤ì œ ì¶œë ¥ ë³¼ë¥¨ dB : ê°ë„ì˜ ë°ì‹œë²¨ - í˜„ì¬ ì „ë ¥ì˜ ë°ì‹œë²¨
+				// ½ÇÁ¦ Ãâ·Â º¼·ı dB : °¨µµÀÇ µ¥½Ãº§ - ÇöÀç Àü·ÂÀÇ µ¥½Ãº§
 				final double SPL = Sensitivity - dB;
 				SaveDCB.setSPL(SPL);
 
@@ -532,16 +603,16 @@ public class SlidingTabsBasicFragment extends Fragment {
 				sqsum += v * v;
 			}
 
-			// sqsum is the sum of all (signal+bias)Â², so
-			// sqsum = sum(signalÂ²) + samples * biasÂ²
+			// sqsum is the sum of all (signal+bias)©÷, so
+			// sqsum = sum(signal©÷) + samples * bias©÷
 			// hence
-			// sum(signalÂ²) = sqsum - samples * biasÂ²
+			// sum(signal©÷) = sqsum - samples * bias©÷
 			// Bias is simply the average value, i.e.
 			// bias = sum / samples
-			// Since power = sum(signalÂ²) / samples, we have
-			// power = (sqsum - samples * sumÂ² / samplesÂ²) / samples
+			// Since power = sum(signal©÷) / samples, we have
+			// power = (sqsum - samples * sum©÷ / samples©÷) / samples
 			// so
-			// power = (sqsum - sumÂ² / samples) / samples
+			// power = (sqsum - sum©÷ / samples) / samples
 			double power = (sqsum - sum * sum / samples) / samples;
 
 			// Scale to the range 0 - 1.
