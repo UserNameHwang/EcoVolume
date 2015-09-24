@@ -40,7 +40,7 @@ public class ParentActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
-		
+
 		FragmentTransaction transaction = getSupportFragmentManager()
 				.beginTransaction();
 		fragment = new SlidingTabsBasicFragment();
@@ -52,7 +52,7 @@ public class ParentActivity extends AppCompatActivity {
 		bar.setDisplayUseLogoEnabled(false);
 
 
-		// Service ½ÇÇà ¿©ºÎ ÆÇ´Ü
+		// Service ì‹¤í–‰ ì—¬ë¶€ íŒë‹¨
 		boolean EcosvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
 		Log.w("svc Check", "" + EcosvcRunning);
 		if(EcosvcRunning) {
@@ -71,7 +71,7 @@ public class ParentActivity extends AppCompatActivity {
 			NCstarted = false;
 		}
 
-		// Notification Service ½ÇÇà ¿©ºÎ ÆÇ´Ü
+		// Notification Service ì‹¤í–‰ ì—¬ë¶€ íŒë‹¨
 		boolean NsvcRunning = isServiceRunning("com.android.inputsound.NotificationServices");
 		Log.w("Nsvc Check", "" + NsvcRunning);
 		if(NsvcRunning) {
@@ -87,9 +87,10 @@ public class ParentActivity extends AppCompatActivity {
 
 		SaveUserSetting.SetLimitDcb((double) sp.getInt("MIN_DCB", 75));
 
-		// Alert ±â´É ½ÇÇà
+		// Alert ê¸°ëŠ¥ ì‹¤í–‰
 		VolumeAlertThread vat = new VolumeAlertThread(this);
 		vat.start();
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -125,13 +126,13 @@ public class ParentActivity extends AppCompatActivity {
 			Ecostarted = false;
 			SaveUserSetting.setEcoVolumeStarted(false);
 			ecoSwitch.setChecked(false);
-			EcoButton.setText("¿¡ÄÚº¼·ı\n½ÃÀÛÇÏ±â");
+			EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì‹œì‘í•˜ê¸°");
 			stopService(new Intent(getApplicationContext(), EcoVolumeServices.class));
 		}else{
 			Ecostarted = true;
 			SaveUserSetting.setEcoVolumeStarted(true);
 			ecoSwitch.setChecked(true);
-			EcoButton.setText("¿¡ÄÚº¼·ı\nÁß´ÜÇÏ±â");
+			EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì¤‘ë‹¨í•˜ê¸°");
 			startService(new Intent(getApplicationContext(), EcoVolumeServices.class));
 		}
 	}
@@ -146,19 +147,19 @@ public class ParentActivity extends AppCompatActivity {
 			NCstarted = false;
 			SaveUserSetting.setNoiseCancelStarted(false);
 			noiseSwitch.setChecked(false);
-			NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\n½ÃÀÛÇÏ±â");
+			NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì‹œì‘í•˜ê¸°");
 			stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
 		}else{
 			NCstarted = true;
 			SaveUserSetting.setNoiseCancelStarted(true);
 			noiseSwitch.setChecked(true);
-			NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\nÁß´ÜÇÏ±â");
+			NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì¤‘ë‹¨í•˜ê¸°");
 			startService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
 		}
 	}
 
 
-	// serviceName : manifest¿¡¼­ ¼³Á¤ÇÑ ¼­ºñ½ºÀÇ ÀÌ¸§
+	// serviceName : manifestì—ì„œ ì„¤ì •í•œ ì„œë¹„ìŠ¤ì˜ ì´ë¦„
 	private Boolean isServiceRunning(String serviceName) {
 		ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -180,7 +181,7 @@ public class ParentActivity extends AppCompatActivity {
 
 		if (interval >= 0 && INTERVAL >= interval) {
 
-			// »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ ÇÏÇÑ º¼·ıÀ» ÀúÀå
+			// ì‚¬ìš©ìê°€ ì„¤ì •í•œ í•˜í•œ ë³¼ë¥¨ì„ ì €ì¥
 			SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
 			SharedPreferences.Editor editor = sp.edit();
 
@@ -206,7 +207,7 @@ public class ParentActivity extends AppCompatActivity {
 			super.onBackPressed();
 		} else {
 			backTime = tempTime;
-			Toast.makeText(ParentActivity.this, "'µÚ·Î' ¹öÆ°À» ÇÑ¹ø ´õ ´©¸£½Ã¸é Á¾·áµË´Ï´Ù.",
+			Toast.makeText(ParentActivity.this, "'ë’¤ë¡œ' ë²„íŠ¼ì„ í•œë²ˆ ë” ëˆ„ë¥´ì‹œë©´ ì¢…ë£Œë©ë‹ˆë‹¤.",
 					Toast.LENGTH_SHORT).show();
 
 		}
@@ -224,7 +225,7 @@ public class ParentActivity extends AppCompatActivity {
 		if(item.getTitle().equals("Information")){
 			Intent infoIntent = new Intent(ParentActivity.this, InfoActivity.class);
 			startActivity(infoIntent);
-			Toast toto = Toast.makeText(this, "InformationÀÌ ¼±ÅÃµÇ¾ú½À´Ï´Ù",Toast.LENGTH_SHORT);
+			Toast toto = Toast.makeText(this, "Informationì´ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤",Toast.LENGTH_SHORT);
 			toto.show();
 		}
 		return super.onOptionsItemSelected(item);
@@ -232,7 +233,7 @@ public class ParentActivity extends AppCompatActivity {
 
 	@Override
 	protected void onDestroy() {
-		// »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ ÇÏÇÑ º¼·ıÀ» ÀúÀå
+		// ì‚¬ìš©ìê°€ ì„¤ì •í•œ í•˜í•œ ë³¼ë¥¨ì„ ì €ì¥
 		SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 

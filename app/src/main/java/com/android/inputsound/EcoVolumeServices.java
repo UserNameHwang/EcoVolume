@@ -63,7 +63,7 @@ public class EcoVolumeServices extends Service implements Runnable {
 
     @Override
     public void run() {
-        // Sample Smartphone º¼·ı ´ç À½¾ĞÀü·ù
+        // Sample Smartphone ë³¼ë¥¨ ë‹¹ ìŒì••ì „ë¥˜
         /*
         0 = 0.00        1 = 0.70
         2 = 1.79        3 = 3.15
@@ -74,7 +74,7 @@ public class EcoVolumeServices extends Service implements Runnable {
         12 = 32.83        13 = 41.25
         14 = 51.85        15 = 57.92
         */
-        // Sample Ear Receiver À½¾Ğ : 112dB/mW, ÀÓÇÇ´ø½º : 16ohm
+        // Sample Ear Receiver ìŒì•• : 112dB/mW, ì„í”¼ë˜ìŠ¤ : 16ohm
         double[] VoltagePerVol =
                 {0.0, 0.7, 1.79, 3.15, 4.56, 6.63, 8.18, 10.4, 12.98, 16.63, 21.03, 25.98, 32.83, 41.25, 51.85, 57.92};
         int Impedance = 16;
@@ -89,16 +89,16 @@ public class EcoVolumeServices extends Service implements Runnable {
                 int mCurvol = audiomanager.getStreamVolume(audiomanager.STREAM_MUSIC);
                 Log.w("Current Volume", "volume : " + mCurvol);
 
-                // Àü·Â °è»ê½Ä : W = V * V / R
+                // ì „ë ¥ ê³„ì‚°ì‹ : W = V * V / R
                 double Watt = (VoltagePerVol[mCurvol] * VoltagePerVol[mCurvol]) / Impedance;
                 double MillWatt = Watt / 1000;
-                // Àü·Â¿¡¼­ÀÇ dB °è»ê½Ä : dB = 10 * log(ÀÓÇÇ´ø½ºÀÇ Àü·Â/ÇöÀç º¼·ı Àü·Â)
+                // ì „ë ¥ì—ì„œì˜ dB ê³„ì‚°ì‹ : dB = 10 * log(ì„í”¼ë˜ìŠ¤ì˜ ì „ë ¥/í˜„ì¬ ë³¼ë¥¨ ì „ë ¥)
                 double dB;
                 if (MillWatt != 0)
                     dB = 10 * Math.log10(OhmofImp / MillWatt);
                 else
                     dB = Sensitivity;
-                // ½ÇÁ¦ Ãâ·Â º¼·ı dB : °¨µµÀÇ µ¥½Ãº§ - ÇöÀç Àü·ÂÀÇ µ¥½Ãº§
+                // ì‹¤ì œ ì¶œë ¥ ë³¼ë¥¨ dB : ê°ë„ì˜ ë°ì‹œë²¨ - í˜„ì¬ ì „ë ¥ì˜ ë°ì‹œë²¨
                 SPL = Sensitivity - dB;
 
                 SharedPreferences sp = getSharedPreferences("pref", MODE_PRIVATE);
@@ -122,28 +122,28 @@ public class EcoVolumeServices extends Service implements Runnable {
 //        public VolumeAlertThread(Context c) {
 //            builder = new NotificationCompat.Builder(c);
 //
-//            // ÀÛÀº ¾ÆÀÌÄÜ ÀÌ¹ÌÁö.
+//            // ì‘ì€ ì•„ì´ì½˜ ì´ë¯¸ì§€.
 //            builder.setSmallIcon(R.mipmap.ic_launcher);
-//            // ¾Ë¸²ÀÌ Ãâ·ÂµÉ ¶§ »ó´Ü¿¡ ³ª¿À´Â ¹®±¸.
-//            builder.setTicker("»ç¿ëÀÚÀÇ º¼·ıÀÌ ³Ê¹« ³ô¾Æ¿ä!");
-//            // ¾Ë¸² Ãâ·Â ½Ã°£.
+//            // ì•Œë¦¼ì´ ì¶œë ¥ë  ë•Œ ìƒë‹¨ì— ë‚˜ì˜¤ëŠ” ë¬¸êµ¬.
+//            builder.setTicker("ì‚¬ìš©ìì˜ ë³¼ë¥¨ì´ ë„ˆë¬´ ë†’ì•„ìš”!");
+//            // ì•Œë¦¼ ì¶œë ¥ ì‹œê°„.
 //            builder.setWhen(System.currentTimeMillis());
-//            // ¾Ë¸² Á¦¸ñ.
-//            builder.setContentTitle("¿¡ÄÚº¼·ı");
-//            // ÇÁ·Î±×·¡½º ¹Ù.
+//            // ì•Œë¦¼ ì œëª©.
+//            builder.setContentTitle("ì—ì½”ë³¼ë¥¨");
+//            // í”„ë¡œê·¸ë˜ìŠ¤ ë°”.
 //            //builder.setProgress(100, 50, false);
-//            // ¾Ë¸² ³»¿ë.
-//            builder.setContentText("»ç¿ëÀÚÀÇ º¼·ıÀÌ ³Ê¹« ³ô¾Æ¿ä!");
-//            // ¾Ë¸²½Ã »ç¿îµå, Áøµ¿, ºÒºûÀ» ¼³Á¤ °¡´É.
+//            // ì•Œë¦¼ ë‚´ìš©.
+//            builder.setContentText("ì‚¬ìš©ìì˜ ë³¼ë¥¨ì´ ë„ˆë¬´ ë†’ì•„ìš”!");
+//            // ì•Œë¦¼ì‹œ ì‚¬ìš´ë“œ, ì§„ë™, ë¶ˆë¹›ì„ ì„¤ì • ê°€ëŠ¥.
 //            builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
-//            // ¾Ë¸² ÅÍÄ¡½Ã ¹İÀÀ.
+//            // ì•Œë¦¼ í„°ì¹˜ì‹œ ë°˜ì‘.
 //            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 //            //builder.setContentIntent(pendingIntent);
-//            // ¾Ë¸² ÅÍÄ¡½Ã ¹İÀÀ ÈÄ ¾Ë¸² »èÁ¦ ¿©ºÎ.
+//            // ì•Œë¦¼ í„°ì¹˜ì‹œ ë°˜ì‘ í›„ ì•Œë¦¼ ì‚­ì œ ì—¬ë¶€.
 //            builder.setAutoCancel(true);
-//            // ¿ì¼±¼øÀ§.
+//            // ìš°ì„ ìˆœìœ„.
 //            builder.setPriority(NotificationCompat.PRIORITY_MAX);
-//            //Áøµ¿
+//            //ì§„ë™
 //            builder.setVibrate(new long[]{1000});
 //
 //        }

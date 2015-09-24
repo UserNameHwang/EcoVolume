@@ -1,5 +1,13 @@
 package com.android.inputsound;
 
+import com.android.view.LineGraphSetting;
+import com.android.view.SlidingTabLayout;
+import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.CheckBox;
+import com.gc.materialdesign.views.Slider;
+import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
+import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,14 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.android.view.LineGraphSetting;
-import com.android.view.SlidingTabLayout;
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.gc.materialdesign.views.CheckBox;
-import com.gc.materialdesign.views.Slider;
-import com.handstudio.android.hzgrapherlib.graphview.LineGraphView;
-import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
 
 import java.util.List;
 
@@ -64,11 +64,11 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 
 		infohandler = new Handler() {
 			public void handleMessage(Message msg){
-				infohandler.sendEmptyMessageDelayed(0, 15000); // 15ÃÊ¿¡ ÇÑ ¹ø refresh
+				infohandler.sendEmptyMessageDelayed(0, 15000); // 15ì´ˆì— í•œ ë²ˆ refresh
 				SaveDCB.setInDCB(inDCB);
 				SaveDCB.setOutDCB(outDCB);
 
@@ -93,7 +93,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 	// PageAdapter
 	class SamplePagerAdapter extends PagerAdapter {
 
-		// TabÀÇ °¹¼ö¸¦ ÁöÁ¤ÇÑ´Ù.
+		// Tabì˜ ê°¯ìˆ˜ë¥¼ ì§€ì •í•œë‹¤.
 		@Override
 		public int getCount() {
 			return 4;
@@ -111,7 +111,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 			return super.getItemPosition(object);
 		}
 
-		// TabTitle °ü¸®.
+		// TabTitle ê´€ë¦¬.
 		@Override
 		public CharSequence getPageTitle(int position) {
 
@@ -147,8 +147,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 					NoiseButton.setTextColor(Color.parseColor("#000000"));
 					EcoButton.setTextColor(Color.parseColor("#000000"));
 
-					// ÅÍÄ¡ ÀÌº¥Æ® disable
-					// true ¸¦ ¸®ÅÏÇÏ¸é disable
+					// í„°ì¹˜ ì´ë²¤íŠ¸ disable
+					// true ë¥¼ ë¦¬í„´í•˜ë©´ disable
 					ecoSwitch.setOnTouchListener(new View.OnTouchListener() {
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
@@ -163,16 +163,16 @@ public class SlidingTabsBasicFragment extends Fragment {
 						}
 					});
 
-					// Service ½ÇÇà ¿©ºÎ ÆÇ´Ü
+					// Service ì‹¤í–‰ ì—¬ë¶€ íŒë‹¨
 					boolean EcosvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
 					Log.w("svc Check", "" + EcosvcRunning);
 					if(EcosvcRunning) {
 						ecoSwitch.setChecked(true);
-						EcoButton.setText("¿¡ÄÚº¼·ı\nÁß´ÜÇÏ±â");
+						EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì¤‘ë‹¨í•˜ê¸°");
 						SaveUserSetting.setEcoVolumeStarted(true);
 					}
 					else {
-						EcoButton.setText("¿¡ÄÚº¼·ı\n½ÃÀÛÇÏ±â");
+						EcoButton.setText("ì—ì½”ë³¼ë¥¨\nì‹œì‘í•˜ê¸°");
 						SaveUserSetting.setEcoVolumeStarted(false);
 					}
 
@@ -180,11 +180,11 @@ public class SlidingTabsBasicFragment extends Fragment {
 					Log.w("svc Check", "" + NCsvcRunning);
 					if(NCsvcRunning) {
 						noiseSwitch.setChecked(true);
-						NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\nÁß´ÜÇÏ±â");
+						NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì¤‘ë‹¨í•˜ê¸°");
 						SaveUserSetting.setNoiseCancelStarted(true);
 					}
 					else {
-						NoiseButton.setText("³ëÀÌÁîÄµ½½¸µ\n½ÃÀÛÇÏ±â");
+						NoiseButton.setText("ë…¸ì´ì¦ˆìº”ìŠ¬ë§\nì‹œì‘í•˜ê¸°");
 						SaveUserSetting.setNoiseCancelStarted(false);
 					}
 					container.addView(homeView);
@@ -433,7 +433,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 		}
 
-		// serviceName : manifest¿¡¼­ ¼³Á¤ÇÑ ¼­ºñ½ºÀÇ ÀÌ¸§
+		// serviceName : manifestì—ì„œ ì„¤ì •í•œ ì„œë¹„ìŠ¤ì˜ ì´ë¦„
 		public Boolean isServiceRunning(String serviceName) {
 			Context c = getActivity();
 			ActivityManager manager = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
@@ -450,7 +450,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 	}
 
-	// AudioRecord °´Ã¼¿¡¼­ ÁÖÆÄ¼ö´Â 8kHz, ¿Àµğ¿À Ã¤³ÎÀº ÇÏ³ª, »ùÇÃÀº 16ºñÆ®¸¦ »ç¿ë
+	// AudioRecord ê°ì²´ì—ì„œ ì£¼íŒŒìˆ˜ëŠ” 8kHz, ì˜¤ë””ì˜¤ ì±„ë„ì€ í•˜ë‚˜, ìƒ˜í”Œì€ 16ë¹„íŠ¸ë¥¼ ì‚¬ìš©
 	int frequency = 8000;
 	int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
 
@@ -460,7 +460,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 		@Override
 		public void run(){
-			// Sample Smartphone º¼·ı ´ç À½¾ĞÀü·ù
+			// Sample Smartphone ë³¼ë¥¨ ë‹¹ ìŒì••ì „ë¥˜
 			/* Volume = mA
 			0 = 0.00			1 = 0.70
 			2 = 1.79			3 = 3.15
@@ -471,14 +471,14 @@ public class SlidingTabsBasicFragment extends Fragment {
 			12 = 32.83			13 = 41.25
 			14 = 51.85			15 = 57.92
 			*/
-			// Sample Ear Receiver À½¾Ğ : 112dB/mW, ÀÓÇÇ´ø½º : 16ohm
+			// Sample Ear Receiver ìŒì•• : 112dB/mW, ì„í”¼ë˜ìŠ¤ : 16ohm
 			double[] VoltagePerVol =
 					{0.0, 0.7, 1.79, 3.15, 4.56, 6.63, 8.18, 10.4, 12.98, 16.63, 21.03, 25.98, 32.83, 41.25, 51.85, 57.92};
 			int Impedance = 16;
 			double OhmofImp = 1;
 			int Sensitivity = 112;
 
-			// AudioRecord¸¦ ¼³Á¤ÇÏ°í »ç¿ëÇÑ´Ù.
+			// AudioRecordë¥¼ ì„¤ì •í•˜ê³  ì‚¬ìš©í•œë‹¤.
 			int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
 
 			AudioRecord audioRecord = new AudioRecord(
@@ -505,8 +505,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 			while(true) {
 				//////////////////////////////////// Input dB Calculate ////////////////////////////////////
 
-				// short·Î ÀÌ·ïÁø ¹è¿­ÀÎ buffer´Â ¿ø½Ã PCM »ùÇÃÀ» AudioRecord °´Ã¼¿¡¼­ ¹Ş´Â´Ù.
-				// double·Î ÀÌ·ïÁø ¹è¿­ÀÎ toTransformÀº °°Àº µ¥ÀÌÅÍ¸¦ ´ãÁö¸¸ double Å¸ÀÔÀÎµ¥, FFT Å¬·¡½º¿¡¼­´Â doubleÅ¸ÀÔÀÌ ÇÊ¿äÇØ¼­ÀÌ´Ù.
+				// shortë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ bufferëŠ” ì›ì‹œ PCM ìƒ˜í”Œì„ AudioRecord ê°ì²´ì—ì„œ ë°›ëŠ”ë‹¤.
+				// doubleë¡œ ì´ë¤„ì§„ ë°°ì—´ì¸ toTransformì€ ê°™ì€ ë°ì´í„°ë¥¼ ë‹´ì§€ë§Œ double íƒ€ì…ì¸ë°, FFT í´ë˜ìŠ¤ì—ì„œëŠ” doubleíƒ€ì…ì´ í•„ìš”í•´ì„œì´ë‹¤.
 
 				//short[] buffer = new short[blockSize];
 				audioRecord.startRecording();
@@ -555,17 +555,17 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 				int mCurvol = audiomanager.getStreamVolume(audiomanager.STREAM_MUSIC);
 
-				// Àü·Â °è»ê½Ä : W = V * V / R
+				// ì „ë ¥ ê³„ì‚°ì‹ : W = V * V / R
 				double Watt = (VoltagePerVol[mCurvol] * VoltagePerVol[mCurvol]) / Impedance;
 				double MillWatt = Watt / 1000;
 
-				// Àü·Â¿¡¼­ÀÇ dB °è»ê½Ä : dB = 10 * log(ÀÓÇÇ´ø½ºÀÇ Àü·Â/ÇöÀç º¼·ı Àü·Â)
+				// ì „ë ¥ì—ì„œì˜ dB ê³„ì‚°ì‹ : dB = 10 * log(ì„í”¼ë˜ìŠ¤ì˜ ì „ë ¥/í˜„ì¬ ë³¼ë¥¨ ì „ë ¥)
 				double dB;
 				if (MillWatt != 0)
 					dB = 10 * Math.log10(OhmofImp / MillWatt);
 				else
 					dB = Sensitivity;
-				// ½ÇÁ¦ Ãâ·Â º¼·ı dB : °¨µµÀÇ µ¥½Ãº§ - ÇöÀç Àü·ÂÀÇ µ¥½Ãº§
+				// ì‹¤ì œ ì¶œë ¥ ë³¼ë¥¨ dB : ê°ë„ì˜ ë°ì‹œë²¨ - í˜„ì¬ ì „ë ¥ì˜ ë°ì‹œë²¨
 				final double SPL = Sensitivity - dB;
 				SaveDCB.setSPL(SPL);
 
@@ -603,16 +603,16 @@ public class SlidingTabsBasicFragment extends Fragment {
 				sqsum += v * v;
 			}
 
-			// sqsum is the sum of all (signal+bias)©÷, so
-			// sqsum = sum(signal©÷) + samples * bias©÷
+			// sqsum is the sum of all (signal+bias)Â², so
+			// sqsum = sum(signalÂ²) + samples * biasÂ²
 			// hence
-			// sum(signal©÷) = sqsum - samples * bias©÷
+			// sum(signalÂ²) = sqsum - samples * biasÂ²
 			// Bias is simply the average value, i.e.
 			// bias = sum / samples
-			// Since power = sum(signal©÷) / samples, we have
-			// power = (sqsum - samples * sum©÷ / samples©÷) / samples
+			// Since power = sum(signalÂ²) / samples, we have
+			// power = (sqsum - samples * sumÂ² / samplesÂ²) / samples
 			// so
-			// power = (sqsum - sum©÷ / samples) / samples
+			// power = (sqsum - sumÂ² / samples) / samples
 			double power = (sqsum - sum * sum / samples) / samples;
 
 			// Scale to the range 0 - 1.

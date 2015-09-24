@@ -49,9 +49,9 @@ public class NotificationServices extends Service implements Runnable {
 
         builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setTicker("¿¡ÄÚº¼·ıÀÌ ½ÇÇàÁßÀÔ´Ï´Ù.");
+        builder.setTicker("ì—ì½”ë³¼ë¥¨ì´ ì‹¤í–‰ì¤‘ì…ë‹ˆë‹¤.");
 
-        //Alert ±â´É ½ÇÇà
+        //Alert ê¸°ëŠ¥ ì‹¤í–‰
         vat = new VolumeAlertThread(this);
         vat.start();
     }
@@ -62,14 +62,14 @@ public class NotificationServices extends Service implements Runnable {
 
         notiStarted = true;
 
-        // Bitmap ·Îµù
+        // Bitmap ë¡œë”©
         Bundle bitmapBundle = new Bundle();
         bitmapBundle = intent.getBundleExtra("bitmap");
 
         RedPoint = bitmapBundle.getParcelable("Red");
         GreenPoint = bitmapBundle.getParcelable("Green");
 
-        // ÇÁ·Î¼¼½º°¡ Á¾·áµÇ¾úÀ» ¶§ Notification À» ÀÌ¿ëÇÏ¿© °£´ÜÈ÷ ±â´É Á¶ÀÛ
+        // í”„ë¡œì„¸ìŠ¤ê°€ ì¢…ë£Œë˜ì—ˆì„ ë•Œ Notification ì„ ì´ìš©í•˜ì—¬ ê°„ë‹¨íˆ ê¸°ëŠ¥ ì¡°ì‘
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification noti = builder.build();
@@ -94,7 +94,7 @@ public class NotificationServices extends Service implements Runnable {
         contentiew.setOnClickPendingIntent(R.id.notiNoiseButton, noisePendingIntent);
         contentiew.setOnClickPendingIntent(R.id.notiCancel, cancelPendingIntent);
 
-        // ¿¡ÄÚ¹öÆ° ¼­ºñ½º ½ÇÇà ¿©ºÎ È®ÀÎ
+        // ì—ì½”ë²„íŠ¼ ì„œë¹„ìŠ¤ ì‹¤í–‰ ì—¬ë¶€ í™•ì¸
         EcoSvcRunning = isServiceRunning("com.android.inputsound.EcoVolumeServices");
 
         if(EcoSvcRunning == true)
@@ -104,7 +104,7 @@ public class NotificationServices extends Service implements Runnable {
 
         NoiseSvcRunning = isServiceRunning("com.android.inputsound.NoiseCancelingServices");
 
-        // ³ëÀÌÁî¹öÆ° ¼­ºñ½º ½ÇÇà ¿©ºÎ È®ÀÎ
+        // ë…¸ì´ì¦ˆë²„íŠ¼ ì„œë¹„ìŠ¤ ì‹¤í–‰ ì—¬ë¶€ í™•ì¸
         if(NoiseSvcRunning == true)
             contentiew.setImageViewBitmap(R.id.notiNoiseImage, GreenPoint);
         else
@@ -156,7 +156,7 @@ public class NotificationServices extends Service implements Runnable {
                 stopService(new Intent(getApplicationContext(), NoiseCancelingServices.class));
                 stopService(new Intent(getApplicationContext(), NotificationServices.class));
 
-                Toast.makeText(getApplicationContext(),"¿¡ÄÚº¼·ı ¼­ºñ½º°¡ Á¾·áµË´Ï´Ù!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"ì—ì½”ë³¼ë¥¨ ì„œë¹„ìŠ¤ê°€ ì¢…ë£Œë©ë‹ˆë‹¤!", Toast.LENGTH_LONG).show();
                 nm.cancelAll();
             }
         };
@@ -204,7 +204,7 @@ public class NotificationServices extends Service implements Runnable {
         }
     }
 
-    // serviceName : manifest¿¡¼­ ¼³Á¤ÇÑ ¼­ºñ½ºÀÇ ÀÌ¸§
+    // serviceName : manifestì—ì„œ ì„¤ì •í•œ ì„œë¹„ìŠ¤ì˜ ì´ë¦„
     private Boolean isServiceRunning(String serviceName) {
         ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 

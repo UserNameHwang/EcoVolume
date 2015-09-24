@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/EcoVolumeServices.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/EcoVolumeServices.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/InfoActivity.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/MainActivity.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/MainActivity_back.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/NoiseCancelingServices.java" charset="x-windows-949" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/NotificationServices.java" charset="x-windows-949" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/ParentActivity.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/NotificationServices.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/ParentActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/SaveDCB.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/SaveUserSetting.java" charset="x-windows-949" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/SlidingTabsBasicFragment.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/SlidingTabsBasicFragment.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/VisualizerView.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/android/inputsound/VolumeAlertThread.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/third_visual.xml" charset="x-windows-949" />

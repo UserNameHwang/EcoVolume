@@ -100,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#FFFFFE"
-                android:text="@string/startNC"
+                android:text=""
                 android:textSize="20sp"
                 android:onClick="onNoiseCancel" />
         </LinearLayout>
@@ -124,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#FFFFFE"
-                android:text="@string/startEC"
+                android:text=""
                 android:textSize="20sp"
                 android:onClick="onEcoVolume"
                 />
