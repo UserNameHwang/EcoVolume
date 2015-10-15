@@ -11,6 +11,8 @@ import com.handstudio.android.hzgrapherlib.vo.linegraph.LineGraphVO;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -30,7 +32,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 
 public class SlidingTabsBasicFragment extends Fragment {
@@ -55,6 +60,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 	private int inDCB, outDCB;
 	private int FirstCheck=0, SecondCheck=0, ThirdCheck=0, LastCheck=0;
+
+	private DBManager dm;//Database Manager
 
 	//visualizer
 	private LinearLayout mInputLayout,mAnalyLayout,mOutputLayout;
@@ -120,7 +127,7 @@ public class SlidingTabsBasicFragment extends Fragment {
 			} else if (position == 1) {
 				return "Log";
 			} else if (position == 2) {
-				return "Infomation";
+				return "Visualization";
 			} else {
 				return "Setting";
 			}
@@ -212,6 +219,8 @@ public class SlidingTabsBasicFragment extends Fragment {
 
 					LineGraphSetting LineSetting = new LineGraphSetting();
 					LineGraphVO LineVo = LineSetting.makeLineGraphAllSetting();
+
+					dm = new DBManager(getActivity(),"Log.db", null, 1);
 
 					lineGraph.addView(new LineGraphView(getActivity(), LineVo));
 
@@ -575,7 +584,9 @@ public class SlidingTabsBasicFragment extends Fragment {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						indBValue.setText(result + " dB");
+
+						if(result>0)
+							indBValue.setText(result + " dB");
 						outdBValue.setText((int) SPL + " dB");
 					}
 				});
@@ -630,6 +641,13 @@ public class SlidingTabsBasicFragment extends Fragment {
 		int[] outvalue = SaveDCB.getOutDCB();
 		int valueCount=0, InputSum=0, OutputSum=0;
 		int InputAvg, OutputAvg;
+		Date date = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("MM-dd");
+		String Month_day = df.format(date);
+		StringTokenizer st = new StringTokenizer(Month_day);
+		int month = Integer.parseInt(st.nextToken("-"));
+		int day = Integer.parseInt(st.nextToken());
+
 		for(int i=0; i<5; i++)
 			if(invalue[i] != 0)
 				valueCount++;
@@ -648,9 +666,12 @@ public class SlidingTabsBasicFragment extends Fragment {
 			OutputAvg = OutputSum/valueCount;
 		}
 
-		inputAmnt.setText(InputAvg+" dB");
+		String query = "INSERT into LogData values("+month+","+day+","+InputAvg+","+OutputAvg+");";
+		dm.insert(query);
+		inputAmnt.setText(InputAvg + " dB");
 		listenAmnt.setText(OutputAvg + " dB");
 
+		Log.w("Database", dm.select("SELECT * from LogData"));
 		lineGraph.removeAllViews();
 		LineGraphSetting LineSetting = new LineGraphSetting();
 		LineGraphVO LineVo = LineSetting.makeLineGraphAllSetting();
