@@ -22,28 +22,28 @@ public class VolumeAlertThread extends Thread {
 
         builder = new NotificationCompat.Builder(c);
 
-        // ÀÛÀº ¾ÆÀÌÄÜ ÀÌ¹ÌÁö.
+        // ìž‘ì€ ì•„ì´ì½˜ ì´ë¯¸ì§€.
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        // ¾Ë¸²ÀÌ Ãâ·ÂµÉ ¶§ »ó´Ü¿¡ ³ª¿À´Â ¹®±¸.
-        builder.setTicker("»ç¿ëÀÚÀÇ º¼·ýÀÌ ³Ê¹« ³ô¾Æ¿ä!");
-        // ¾Ë¸² Ãâ·Â ½Ã°£.
+        // ì•Œë¦¼ì´ ì¶œë ¥ë  ë•Œ ìƒë‹¨ì— ë‚˜ì˜¤ëŠ” ë¬¸êµ¬.
+        builder.setTicker("ì‚¬ìš©ìžì˜ ë³¼ë¥¨ì´ ë„ˆë¬´ ë†’ì•„ìš”!");
+        // ì•Œë¦¼ ì¶œë ¥ ì‹œê°„.
         builder.setWhen(System.currentTimeMillis());
-        // ¾Ë¸² Á¦¸ñ.
-        builder.setContentTitle("¿¡ÄÚº¼·ý");
-        // ÇÁ·Î±×·¡½º ¹Ù.
+        // ì•Œë¦¼ ì œëª©.
+        builder.setContentTitle("ì—ì½”ë³¼ë¥¨");
+        // í”„ë¡œê·¸ëž˜ìŠ¤ ë°”.
         //builder.setProgress(100, 50, false);
-        // ¾Ë¸² ³»¿ë.
-        builder.setContentText("»ç¿ëÀÚÀÇ º¼·ýÀÌ ³Ê¹« ³ô¾Æ¿ä!");
-        // ¾Ë¸²½Ã »ç¿îµå, Áøµ¿, ºÒºûÀ» ¼³Á¤ °¡´É.
+        // ì•Œë¦¼ ë‚´ìš©.
+        builder.setContentText("ì‚¬ìš©ìžì˜ ë³¼ë¥¨ì´ ë„ˆë¬´ ë†’ì•„ìš”!");
+        // ì•Œë¦¼ì‹œ ì‚¬ìš´ë“œ, ì§„ë™, ë¶ˆë¹›ì„ ì„¤ì • ê°€ëŠ¥.
         builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS);
-        // ¾Ë¸² ÅÍÄ¡½Ã ¹ÝÀÀ.
+        // ì•Œë¦¼ í„°ì¹˜ì‹œ ë°˜ì‘.
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         //builder.setContentIntent(pendingIntent);
-        // ¾Ë¸² ÅÍÄ¡½Ã ¹ÝÀÀ ÈÄ ¾Ë¸² »èÁ¦ ¿©ºÎ.
+        // ì•Œë¦¼ í„°ì¹˜ì‹œ ë°˜ì‘ í›„ ì•Œë¦¼ ì‚­ì œ ì—¬ë¶€.
         builder.setAutoCancel(true);
-        // ¿ì¼±¼øÀ§.
+        // ìš°ì„ ìˆœìœ„.
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        //Áøµ¿
+        //ì§„ë™
         builder.setVibrate(new long[]{1000});
     }
 
@@ -66,16 +66,16 @@ public class VolumeAlertThread extends Thread {
                 try {
                     int mCurvol = audiomanager.getStreamVolume(audiomanager.STREAM_MUSIC);
 
-                    // Àü·Â °è»ê½Ä : W = V * V / R
+                    // ì „ë ¥ ê³„ì‚°ì‹ : W = V * V / R
                     double Watt = (VoltagePerVol[mCurvol] * VoltagePerVol[mCurvol]) / Impedance;
                     double MillWatt = Watt / 1000;
-                    // Àü·Â¿¡¼­ÀÇ dB °è»ê½Ä : dB = 10 * log(ÀÓÇÇ´ø½ºÀÇ Àü·Â/ÇöÀç º¼·ý Àü·Â)
+                    // ì „ë ¥ì—ì„œì˜ dB ê³„ì‚°ì‹ : dB = 10 * log(ìž„í”¼ë˜ìŠ¤ì˜ ì „ë ¥/í˜„ìž¬ ë³¼ë¥¨ ì „ë ¥)
                     double dB;
                     if (MillWatt != 0)
                         dB = 10 * Math.log10(OhmofImp / MillWatt);
                     else
                         dB = Sensitivity;
-                    // ½ÇÁ¦ Ãâ·Â º¼·ý dB : °¨µµÀÇ µ¥½Ãº§ - ÇöÀç Àü·ÂÀÇ µ¥½Ãº§
+                    // ì‹¤ì œ ì¶œë ¥ ë³¼ë¥¨ dB : ê°ë„ì˜ ë°ì‹œë²¨ - í˜„ìž¬ ì „ë ¥ì˜ ë°ì‹œë²¨
                     SPL = Sensitivity - dB;
 
                     if (SPL >= 90) {
@@ -88,6 +88,7 @@ public class VolumeAlertThread extends Thread {
                         NotificationManager manager = (NotificationManager) c.getSystemService(c.NOTIFICATION_SERVICE);
 
                         manager.notify(1, builder.build());
+
                     }
                     Thread.sleep(1000);
                 } catch (Throwable t) {
